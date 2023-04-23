@@ -4,6 +4,7 @@ import cors from 'cors'
 import { registerRouter } from './routes/Register.route'
 import { signInRouter } from './routes/SignIn.route'
 import { userRouter } from './routes/User.route'
+import { updatePasswordRouter } from './routes/UpdatePassword.route'
 import { uploadRouter } from './routes/Upload.route'
 
 const app = express()
@@ -17,6 +18,7 @@ app.use('/upload', uploadRouter)
 app.use('/register', registerRouter)    //註冊
 app.use('/sign_in', signInRouter)       //登入
 app.use('/profile', userRouter)
+app.use('/updatePassword', updatePasswordRouter)  //更新密碼
 
 
 
