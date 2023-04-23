@@ -1,13 +1,14 @@
 import { runInNewContext } from "vm";
 
 const jwt = require('jsonwebtoken');
-const appError = require('../services/appError'); 
 const handleErrorAsync = require('../services/handleErrorAsync');
 const express = require('express');
-const Register = require('../models/Register.model');
+
+import { appError } from '../services/appError';
+import { Register } from '../models/Register.model';
 
 // 驗證是否登入狀態 , jwt驗證 token 正確性
-const isAuth = handleErrorAsync(async (req, res, next) => {
+export const isAuth = handleErrorAsync(async (req, res, next) => {
     // 確認 token 是否存在
     let token;
     if (
