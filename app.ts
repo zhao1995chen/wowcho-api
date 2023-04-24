@@ -18,7 +18,7 @@ app.use('/upload', uploadRouter)
 app.use('/sign-up', registerRouter)    //註冊
 app.use('/login', signInRouter)       //登入
 app.use('/profile', userRouter)
-app.use('/updatePassword', updatePasswordRouter)  //更新密碼
+app.use('/reset-password', updatePasswordRouter)  //更新密碼
 
 
 

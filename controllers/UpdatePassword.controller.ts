@@ -13,20 +13,38 @@ export const UpdatePasswordController = {
 
     async patch(req: any, res: Response, next: NextFunction){
         try{
-            let password  = req.body.password;
-            let confirmPassword = req.body.confirmPassword
+            let oldPassword  = req.body.oldPassword;
+            let newPassword = req.body.newPassword;
 
-            if(password!==confirmPassword){
-              return next(appError(400,"密碼不一致！",next));
+            if (!oldPassword || !newPassword) {
+                return next(appError( 400,'請填寫必填欄位',next));
+              }
+
+            // 密碼 8 碼以上
+            if(!validator.isLength(newPassword,{min:8})){
+                return next(appError(400,"密碼字數低於 8 碼",next));
             }
+
+            const account = req.user.account
+            console.log('req.user',account)
+            const user = await Register.findOne({ account }).select('+password');
+            console.log(user)
+            const auth = await bcrypt.compare(oldPassword, user.password);
+            if(!auth){
+              return next(appError(400,'您的舊密碼不正確',next));
+            }
+
+            if(oldPassword === newPassword){
+                return next(appError(400,"新密碼不能與前次密碼相同",next));            
+            }
+
+            let hashNewPassword = await bcrypt.hash(newPassword,12);
             
-            let newPassword = await bcrypt.hash(password,12);
-            
-            const user = await Register.findByIdAndUpdate(req.user,{
-              password:newPassword
+            const setUser = await Register.findByIdAndUpdate(req.user,{
+              password: hashNewPassword
             });
-            console.log("user",user)
-            generateSendJWT(user,200,res)
+            console.log("setUser",setUser)
+            generateSendJWT(setUser,200,res)
 
         } catch(e) {
             console.log(res)
