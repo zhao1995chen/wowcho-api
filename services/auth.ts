@@ -54,8 +54,9 @@ const generateSendJWT= (user,statusCode,res)=>{
   // 組給前端的response訊息
   user.password = undefined;
   res.status(statusCode).json({ //statusCode:201成功
-    status: 'success',
-    user:{
+    code: statusCode,
+    message: 'Success',
+    data:{
       token,
       name: user.name
     }
