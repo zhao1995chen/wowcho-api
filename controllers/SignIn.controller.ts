@@ -15,22 +15,22 @@ export const SignInController = {
         try{
             //檢查使用者body
             console.log(req.body)
-            const { email, password } =  new Register(req.body);
+            const { account, password } =  new Register(req.body);
 
-            if (!email || !password) {
-              return next(appError( 400,'帳號密碼不可為空',next));
+            if (!account || !password) {
+              return next(appError( 400,'請填寫必填欄位',next));
             }
           
-            if (!validator.isEmail(email)) {
-                appError(400, "email格式錯誤", next);
-              }
+            // if (!validator.isEmail(email)) {
+            //     appError(400, "email格式錯誤", next);
+            // }
 
 
             // 找出資料庫Document
-            const user = await Register.findOne({ email }).select('+password');
+            const user = await Register.findOne({ account }).select('+password');
             console.log(user)
             if(!user){
-                return next(appError(400,'Email帳號或密碼有誤，請重新輸入',next));
+                return next(appError(400,'帳號或密碼有誤，請重新輸入',next));
             }
             
             const auth = await bcrypt.compare(password, user.password);
