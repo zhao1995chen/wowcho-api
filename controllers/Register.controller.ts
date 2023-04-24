@@ -15,12 +15,12 @@ export const RegisterController = {
         try{
             //檢查使用者body
             console.log(req.body)
-            let { email, password, name } =  new Register(req.body);
+            let { email, password, username, account, } =  new Register(req.body);
             let confirmPassword = req.body.confirmPassword
             // 內容不可為空
-            console.log(email, password, confirmPassword, name)
-            if(!email||!password||!confirmPassword||!name){
-                return next(appError(400,"欄位未填寫正確！",next));
+            console.log(email, password, confirmPassword, username, account)
+            if(!email||!password||!confirmPassword||!username||!account){
+                return next(appError(400,"請填寫必填欄位！",next));
             }
             // 密碼正確
             if(password!==confirmPassword){
@@ -40,11 +40,12 @@ export const RegisterController = {
             const newUser = await Register.create({ //建入資料庫
                 email,
                 password,
-                name
+                username,
+                account
             });
-            console.log("newUser",newUser) //物件
+            console.log("newUser",newUser)
         
-            //自建的function,產jwt加密TOKEN 給前端
+            //jwt加密TOKEN 給前端
             generateSendJWT(newUser,201,res);
         } catch(e) {
             errorHandler(res, e)
