@@ -2,6 +2,7 @@ import express from 'express'
 
 import { userRouter } from './routes/User.route'
 import { uploadRouter } from './routes/Upload.route'
+import { promisesRouter } from './routes/Promises.route'
 
 const app = express()
 
@@ -11,5 +12,6 @@ app.use(express.json())
 app.use('/upload', uploadRouter)
 
 app.use('/profile', userRouter)
+app.use('/proposal/promises', promisesRouter)
 
 export default app
