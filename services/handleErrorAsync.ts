@@ -5,6 +5,7 @@ export const handleErrorAsync = function handleErrorAsync(func) {
         //再執行函式，async 可再用 catch 統一捕捉
         func(req, res, next).catch(
             function (error) {
+                console.log('handleErrorAsync',error)
                 return next(error);
             }
         );
