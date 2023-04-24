@@ -17,7 +17,7 @@ export const FaqController = {
 
       // 資料表關聯
       const { _id } = proposalData
-      const proposal = await Proposal.findById(_id).populate('faqIdList')
+      const proposal = await Proposal.findById(_id).populate('faqIdList', { _id: 0 })
       const list = proposal.faqIdList
       // console.log('faq', list)
 
