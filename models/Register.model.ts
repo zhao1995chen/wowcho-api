@@ -1,6 +1,7 @@
 // 會員相關
 import { Schema, model } from 'mongoose'
 import { IRegister } from '../interfaces/Register.interface'
+import { User } from '../models/User.model';
 
 const RegisterSchema = new Schema<IRegister>(
   {
@@ -33,12 +34,13 @@ const RegisterSchema = new Schema<IRegister>(
     // }
   },
   {
-    versionKey: false,
-    timestamps: true
+    versionKey: false
   }
 )
 
-const Register = model<IRegister>('Register', RegisterSchema)
+// const Register = model<IRegister>('Register', RegisterSchema)
+const Register = User.discriminator<IRegister>('Register', RegisterSchema)
+
 
 export {
   Register,

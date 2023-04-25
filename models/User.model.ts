@@ -11,7 +11,8 @@ const UserSchema = new Schema<IUser>(
     // 繼續填寫
   },
   {
-    versionKey: false
+    versionKey: false,
+    timestamps: true
   }
 )
 
