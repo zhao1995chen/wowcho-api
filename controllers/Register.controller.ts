@@ -15,11 +15,11 @@ export const RegisterController = {
         try{
             //檢查使用者body
             console.log(req.body)
-            let { email, password, username, account, } =  new Register(req.body);
+            let { email, password, account, } =  new Register(req.body);
             // let confirmPassword = req.body.confirmPassword
             // 內容不可為空
-            console.log(email, password, username, account)
-            if(!email||!password||!username||!account){
+            console.log(email, password,  account)
+            if(!email||!password||!account){
                 return next(appError(400,"請填寫必填欄位！",next));
             }
             // 密碼正確
@@ -40,7 +40,6 @@ export const RegisterController = {
             const newUser = await Register.create({ //建入資料庫
                 email,
                 password,
-                username,
                 account
             });
             console.log("newUser",newUser)

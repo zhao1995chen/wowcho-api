@@ -4,10 +4,10 @@ import { IRegister } from '../interfaces/Register.interface'
 
 const RegisterSchema = new Schema<IRegister>(
   {
-    username: {
-      type: String,
-      required: [true, '請輸入您的名字']
-    },
+    // username: {
+    //   type: String,
+    //   required: [true, '請輸入您的名字']
+    // },
     account: {
       type: String,
       required: [true, '帳號必填'],
