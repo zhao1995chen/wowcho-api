@@ -30,10 +30,11 @@ app.use(function(req, res, next) {
     });
   });
   
-  // express 錯誤處理
+  // express 錯誤處理 (from controller)
   const resErrorProd = (err, res) => {
     if (err.isOperational) {
       res.status(err.statusCode).json({
+        status: 'error',
         message: err.message
       });
     } else {
