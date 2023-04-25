@@ -1,4 +1,4 @@
-export const handleErrorAsync = function handleErrorAsync(func) {
+const handleErrorAsync = function handleErrorAsync(func) {
     // func 先將 async fun 帶入參數儲存
     // middleware 先接住 router 資料
     return function (req, res, next) {
@@ -12,4 +12,4 @@ export const handleErrorAsync = function handleErrorAsync(func) {
     };
 };
 
-module.exports = handleErrorAsync;
+export default handleErrorAsync;
