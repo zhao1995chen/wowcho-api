@@ -35,6 +35,8 @@ interface ISponsor {
   recipientShopId: string // 收件門市 id
   recipientTrackingId: string // 收件追蹤編號
   recipientAddress: string // 收件地址
+  createTime?: number // 訂單建立時間
+  updateTime?: number // 訂單更新時間
 }
 
 interface ISpecification {

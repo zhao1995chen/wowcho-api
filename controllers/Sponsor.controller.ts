@@ -16,9 +16,24 @@ export const SponsorController = {
       const sponsorIdList = await User.findById(_id).select('sponsorIdList')
 
       // 從 sponsor 表中撈出該使用者的贊助資料，並取得對應頁數的內容
-      const list = await Sponsor.find({ _id: { $in: sponsorIdList } }).sort({ createTime: -1 })
+      const list = []
+      const originList = await Sponsor.find({ _id: { $in: sponsorIdList } }).sort({ createTime: -1 })
         .skip((currentPage - 1) * pageSize)
         .limit(pageSize);
+      originList.forEach((item) => {
+        list.push({
+          "id": item._id,
+          "date": item.createTime,
+          // 後續要使用 item.orderPlanId 改成從 project 表中撈出對應的 projectTitle, orderPlan
+          "projectTitle": "超早鳥 - 潮到出水短T",
+          "orderPlan": "潮到出水短T套裝組",
+          "orderSpecification": item.orderSpecification,
+          "totalMoney": item.totalMoney,
+          "orderStatus": item.orderStatus,
+          "shippingStatus": item.shippingStatus,
+        })
+      })
+        
       
       // 計算總頁數, 有可能 user 的 sponsorIdList 取得的 sponsor 資料不一
       const totalNun = await Sponsor.countDocuments({ _id: { $in: sponsorIdList } })
