@@ -2,12 +2,13 @@
 import { Request, Response, NextFunction } from 'express'
 import { appError } from '../services/appError';
 import { errorHandler } from '../services/errorHandler'
-import { successHandler } from '../services/successHandler'
 import { Register } from '../models/Register.model';
 import { IRegister } from '../interfaces/Register.interface'
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const {generateSendJWT} = require('../services/auth')
+import { successHandler } from '../services/successHandler'
+import validator from 'validator'
+import bcrypt from 'bcryptjs'
+import { generateSendJWT } from '../middlewares/auth'
+
 
 export const RegisterController = {
 
@@ -15,17 +16,17 @@ export const RegisterController = {
         try{
             //檢查使用者body
             console.log(req.body)
-            let { email, password, username, account, } =  new Register(req.body);
-            let confirmPassword = req.body.confirmPassword
+            let { email, password, account, } =  new Register(req.body);
+            // let confirmPassword = req.body.confirmPassword
             // 內容不可為空
-            console.log(email, password, confirmPassword, username, account)
-            if(!email||!password||!confirmPassword||!username||!account){
+            console.log(email, password,  account)
+            if(!email||!password||!account){
                 return next(appError(400,"請填寫必填欄位！",next));
             }
             // 密碼正確
-            if(password!==confirmPassword){
-                return next(appError(400,"密碼不一致！",next));
-            }
+            // if(password!==confirmPassword){
+            //     return next(appError(400,"密碼不一致！",next));
+            // }
             // 密碼 8 碼以上
             if(!validator.isLength(password,{min:8})){
                 return next(appError(400,"密碼字數低於 8 碼",next));
@@ -40,7 +41,6 @@ export const RegisterController = {
             const newUser = await Register.create({ //建入資料庫
                 email,
                 password,
-                username,
                 account
             });
             console.log("newUser",newUser)

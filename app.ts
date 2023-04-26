@@ -2,9 +2,7 @@ import express from 'express'
 import cors from 'cors' 
 
 import { registerRouter } from './routes/Register.route'
-// import { signInRouter } from './routes/SignIn.route'
 import { userRouter } from './routes/User.route'
-// import { updatePasswordRouter } from './routes/UpdatePassword.route'
 import { uploadRouter } from './routes/Upload.route'
 
 const app = express()
@@ -16,9 +14,7 @@ app.use(express.json())
 app.use('/upload', uploadRouter)
 
 app.use('/sign-up', registerRouter)    //註冊
-// app.use('/login', signInRouter)       //登入
 app.use('/profile', userRouter)
-// app.use('/reset-password', updatePasswordRouter)  //更新密碼
 
 
 
@@ -30,10 +26,11 @@ app.use(function(req, res, next) {
     });
   });
   
-  // express 錯誤處理
+  // express 錯誤處理 (from controller)
   const resErrorProd = (err, res) => {
     if (err.isOperational) {
       res.status(err.statusCode).json({
+        status: 'error',
         message: err.message
       });
     } else {
