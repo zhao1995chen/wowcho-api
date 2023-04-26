@@ -28,6 +28,7 @@ interface IUser {
   instagram?: string // IG 網址
   youtube?: string // YT 網址
   tokenList?: Array<string> // 驗證
+  sponsorIdList?: string[] // 贊助id列表
 }
 
 interface IAccount {
