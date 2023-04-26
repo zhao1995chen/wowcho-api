@@ -51,6 +51,56 @@ export const SponsorController = {
       errorHandler(res, e)
     }
   },
+  async getDetail(req: Request, res: Response) {
+    try {
+      const { _id } = req.body
+      const sponsor = await Sponsor.findById(_id)
+
+      const order_info = {
+        id: sponsor._id,
+        // 需要關聯 proposal 表
+        project_title: "超早鳥 - 潮到出水短T",
+        project_id: sponsor.orderPlanId,
+        order_id: sponsor._id,
+        // 需要關聯 plan 表
+        order_plan: "潮到出水短T套裝組",
+        order_time: sponsor.createTime,
+        order_specification: sponsor.orderSpecification,
+        freight: sponsor.freight,
+        total_money: sponsor.totalMoney,
+        pay_way: sponsor.payWay,
+        order_status: sponsor.orderStatus,
+        logistics: sponsor.logistics,
+        good_status: sponsor.shippingStatus,
+        note: sponsor.note,
+      }
+
+      const recipient_info = {
+        name: sponsor.recipientName,
+        phone: sponsor.recipientPhone,
+        address_info:{
+          way: sponsor.recipientWay,
+          shop: sponsor.recipientShop,
+          shop_id: sponsor.recipientShopId,
+          tracking_id: sponsor.recipientTrackingId,
+          address: sponsor.recipientAddress,
+        }
+      }
+
+      // 需要關聯 messages 表
+      const messages = []
+
+      const data = {
+        order_info: order_info,
+        recipient_info: recipient_info,
+        messages: messages
+      }
+      
+      successHandler(res, data)
+    } catch(e) {
+      errorHandler(res, e)
+    }
+  },
   options(req: Request, res: Response) {
     successHandler(res)
   }
