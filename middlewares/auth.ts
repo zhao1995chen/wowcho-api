@@ -1,9 +1,6 @@
-import { runInNewContext } from "vm";
-
-const jwt = require('jsonwebtoken');
-const handleErrorAsync = require('../services/handleErrorAsync');
-const express = require('express');
-
+// const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken'
+import handleErrorAsync from "../services/handleErrorAsync"
 import { appError } from '../services/appError';
 import { Register } from '../models/Register.model';
 
@@ -43,10 +40,10 @@ export const isAuth = handleErrorAsync(async (req, res, next) => {
   });
 
 // 存入資料庫的物件 產JWT通行證TOKEN
-const generateSendJWT= (user,statusCode,res)=>{
+export const generateSendJWT= (user,statusCode,res)=>{
   // 產生 JWT token
   const token = jwt.sign({id:user._id},process.env.JWT_SECRET,{
-    expiresIn: process.env.JWT_EXPIRES_DAY
+    expiresIn: process.env.JWT_EXPIRES_IN
   });
 
   console.log("generateSendJWT", token) //產生JWT臨時通行證

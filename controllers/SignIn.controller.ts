@@ -2,12 +2,12 @@
 import { Request, Response, NextFunction } from 'express'
 import { appError } from '../services/appError';
 import { errorHandler } from '../services/errorHandler'
-import { successHandler } from '../services/successHandler'
 import { Register } from '../models/Register.model';
 import { IRegister } from '../interfaces/Register.interface'
-const validator = require('validator')
-const bcrypt = require('bcryptjs')
-const {generateSendJWT} = require('../services/auth')
+import { successHandler } from '../services/successHandler'
+import validator from 'validator'
+import bcrypt from 'bcryptjs'
+import { generateSendJWT } from '../middlewares/auth'
 
 export const SignInController = {
 

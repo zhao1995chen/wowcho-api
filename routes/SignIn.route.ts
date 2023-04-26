@@ -1,7 +1,6 @@
 import express from 'express'
 import { SignInController } from '../controllers/SignIn.controller'
+import handleErrorAsync from "../services/handleErrorAsync"
 export const signInRouter = express.Router()
-
-const handleErrorAsync = require('../services/handleErrorAsync')
 
 signInRouter.post('/', handleErrorAsync(SignInController.signIn))
