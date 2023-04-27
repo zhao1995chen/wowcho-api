@@ -1,0 +1,9 @@
+import express from 'express'
+
+import { ProposalController } from '../controllers/Proposal.controller'
+
+export const proposalRouter = express.Router()
+
+proposalRouter
+  .get('/', ProposalController.getList)
+  .get('/details', ProposalController.get)

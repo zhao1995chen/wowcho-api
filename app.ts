@@ -2,6 +2,7 @@ import express from 'express'
 
 import { userRouter } from './routes/User.route'
 import { uploadRouter } from './routes/Upload.route'
+import { proposalRouter } from './routes/Proposal.route'
 
 const app = express()
 
@@ -11,5 +12,6 @@ app.use(express.json())
 app.use('/upload', uploadRouter)
 
 app.use('/profile', userRouter)
+app.use('/proposal', proposalRouter)
 
 export default app
