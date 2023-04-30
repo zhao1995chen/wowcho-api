@@ -21,7 +21,10 @@ const ProposalSchema = new Schema<IProposal>(
     planIdList: [String],
     contentsId: String,
     messageIdList:  [String],
-    faqIdList: [String],
+    faqIdList:  [{
+      type: Schema.Types.ObjectId,
+      ref: 'faq'
+    }],
     promiseId: [{
       type: Schema.Types.ObjectId,
       ref: 'promise'
