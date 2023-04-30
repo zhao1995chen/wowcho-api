@@ -7,8 +7,12 @@ const UserSchema = new Schema<IUser>(
     account: {
       type: String,
       required: [ true, '帳號必填' ]
-    }
+    },
     // 繼續填寫
+    sponsorIdList: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Sponsor'
+    }],
   },
   {
     versionKey: false
