@@ -3,5 +3,5 @@ import { FaqController } from '../controllers/Faq.controller'
 
 export const faqRouter = express.Router()
 
-faqRouter.post('/', FaqController.get)
+faqRouter.get('/', FaqController.get)
 faqRouter.post('/', FaqController.create)
