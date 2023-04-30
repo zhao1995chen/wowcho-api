@@ -10,7 +10,7 @@ const ProposalSchema = new Schema<IProposal>(
       enum: [0, 1, 2, 3, 4, 5, 6],
     },
     image: String,
-    videoUrl: String,
+    video: String,
     summary: String,
     description: String,
     targetPrice: Number,
@@ -25,7 +25,10 @@ const ProposalSchema = new Schema<IProposal>(
       type: Schema.Types.ObjectId,
       ref: 'faq'
     }],
-    promiseId:  [String],
+    promiseId: [{
+      type: Schema.Types.ObjectId,
+      ref: 'promise'
+    }],
     placardIdList:  [String],
     liveId:  String,
   },
