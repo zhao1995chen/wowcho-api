@@ -1,0 +1,41 @@
+<% /* global JSON */ %>
+  <!DOCTYPE html>
+  <html>
+
+  <head>
+    <title>
+      <%= title %>
+    </title>
+    <!-- <link rel='stylesheet' href='/stylesheets/style.css' /> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <h1>
+        <%= title %>
+      </h1>
+    </div>
+
+    <script type="module">
+      import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.esm-browser.min.js';
+
+      const app = {
+        data() {
+          return {
+            data: {},
+          }
+        },
+        created() {
+          const mpgReturnData = JSON.parse('<%- JSON.stringify(mpgReturnData) %>');
+          mpgReturnData ? this.data = mpgReturnData : this.data = {}
+          console.log(mpgReturnData)
+
+        },
+
+      }
+      createApp(app).mount('#app')
+    </script>
+  </body>
+
+  </html>

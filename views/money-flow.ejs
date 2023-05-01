@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <!-- <link rel="stylesheet" href="/stylesheets/style.css" /> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <h2>
+      3008
+      <%= title %>
+    </h2>
+    <form ref="orderForm" @submit.prevent="createOrder" action="<%= PayGateWay %>" method="post">
+      <div>
+        <label>商品品名:</label> {{ order.ItemDesc}}
+        <input type="hidden" name="ItemDesc" :value="order.ItemDesc" required />
+      </div>
+      <div>
+        <label>訂單金額: </label> {{ order.Amt}} 元
+        <input type="hidden" name="Amt" :value="order.Amt" required />
+      </div>
+      <div>
+        <label for="Email">
+          付款人 Email:
+          <input type="email" id="Email" name="Email" v-model="order.Email" required />
+        </label>
+      </div>
+
+      <!-- 必傳參數 -->
+      <input type="hidden" name="MerchantID" :value="merchantID" required />
+      <input type="hidden" name="Version" :value="version" required />
+
+      <input type="hidden" name="TimeStamp" :value="order.TimeStamp" required />
+      <input type="hidden" name="MerchantOrderNo" :value="order.MerchantOrderNo" required />
+
+      <input type="hidden" name="TradeSha" v-model="enOrder.TradeSha" required />
+      <input type="hidden" name="TradeInfo" v-model="enOrder.TradeInfo" required />
+
+      <button type="submit">已確認訂單金額，選擇支付方式</button>
+    </form>
+  </div>
+
+  <script type="module">
+    import { createApp } from 'https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.37/vue.esm-browser.min.js';
+
+    const host = '<%= Host %>';
+    const app = {
+      data() {
+        return {
+          order: { //給藍新必填欄位 參數名不可變動
+            ItemDesc: 'Chelly牌雨傘',        //商品品名
+            Amt: '100',                     //訂單金額
+            Email: 'wowcho2023@gmail.com',  //付款人信箱 （非收件人
+            TimeStamp: '',                  //時間戳記
+            MerchantOrderNo: '',            //商店訂單編號
+            ReturnURL: '',                  //支付完成 返回商店網址
+            NotifyURL: '',                  //支付通知網址
+            EncryptType: 0,                 //加密模式 AES256方式加密參帶0, AES GCM方式加密帶1
+            CVSCOM: 0,                      //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟
+          },
+          enOrder: {
+            order: {},    //未加密
+            TradeSha: '', //加密DATA 給藍新必填欄位 參數名不可變動
+            TradeInfo: '' //加密DATA 給藍新必填欄位 參數名不可變動
+          },
+          merchantID: '<%= MerchantID %>', //商店代號 給藍新必填欄位 參數名不可變動
+          version: '<%= Version %>',       //版本號 給藍新必填欄位 參數名不可變動
+        };
+      },
+      methods: {
+        async createOrder() {
+          try {
+            const TimeStamp = Math.round(new Date().getTime() / 1000);
+            this.order.TimeStamp = TimeStamp;
+            this.order.MerchantOrderNo = this.order.TimeStamp;
+
+            const url = `${host}/money-flow/createOrder`; //後端加密api
+            console.log('this.order', this.order);
+            const res = await axios.post(url, this.order); //後端加密
+            console.log('res', res);
+            const resData = res.data;
+            this.enOrder = {
+              order: resData.order,
+              TradeSha: resData.shaEncrypt,
+              TradeInfo: resData.aesEncrypt,
+            }
+            console.log('this.enOrder', this.enOrder)
+            const form = await this.$refs.orderForm;
+            // return console.log('form', form)
+            form.submit(); //藍新僅接收Form Post
+
+          } catch (error) {
+            console.log('Encode Error:', error.message);
+          }
+        },
+      },
+    };
+
+    createApp(app).mount('#app');
+  </script>
+</body>
+
+</html>
