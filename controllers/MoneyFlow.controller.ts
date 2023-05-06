@@ -3,14 +3,14 @@ import { Request, Response, NextFunction } from 'express'
 import { appError } from '../services/appError'
 import { MoneyFlowCreateOrder } from '../models/MoneyFlow.model'
 import { MoneyFlowSuccessOrder } from '../models/MoneyFlowSuccessOrder.model'
-// import { IMoneyFlow } from '../interfaces/MoneyFlow.interface'
+import { IMoneyFlowCreateOrder } from '../interfaces/MoneyFlow.interface'
 // import { successHandler } from '../services/successHandler'
 import { errorHandler } from '../services/errorHandler'
 import validator from 'validator'
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '../middlewares/MoneyFlow.middleware'
 
 
-export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnUrl, NotifyURL, PayGateWay } = process.env;
+export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnURL, NotifyURL, PayGateWay } = process.env;
 
 export const MoneyFlowController = {
     // enOrder:{
@@ -23,15 +23,17 @@ export const MoneyFlowController = {
     //     ReturnURL: '',
     //     NotifyURL: '',
     //     EncryptType: null,
-    //     CVSCOM: null
+    //     CVSCOM: 0,
+    //     CREDIT: 1,
     //   },
     //   aesEncrypt:'',
     //   shaEncrypt:''
     // },
+    orders: {},
     async get(req: Request, res: Response){
       // 取得env
       try {
-        res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay});
+        res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
       } catch(e) {
         errorHandler(res, e)
       }
@@ -39,8 +41,8 @@ export const MoneyFlowController = {
     async createEncode(req: Request, res: Response, next: NextFunction){
       try{
           //檢查使用者body
-          console.log(req.body)
-          let { Email, ItemDesc, Amt, TimeStamp, MerchantOrderNo, ReturnURL, NotifyURL, EncryptType, CVSCOM } =  new MoneyFlowCreateOrder(req.body);
+          console.log('req.body',req.body)
+          const { Email, ItemDesc, Amt, TimeStamp, MerchantOrderNo, ReturnURL, NotifyURL, EncryptType, CVSCOM, CREDIT } =  new MoneyFlowCreateOrder(req.body);
 
           if(!Email){
               return next(appError(400,"請填寫必填欄位！",next));
@@ -51,7 +53,7 @@ export const MoneyFlowController = {
               return next(appError(400,"Email 格式不正確",next));
           }
 
-          console.log(Email,ItemDesc,Amt,TimeStamp,MerchantOrderNo,ReturnURL,NotifyURL,EncryptType,CVSCOM)
+          console.log(Email,ItemDesc,Amt,TimeStamp,MerchantOrderNo,ReturnURL,NotifyURL,EncryptType,CVSCOM,CREDIT)
 
           // ItemDesc //商品品名
           // Amt //訂單金額
@@ -64,13 +66,32 @@ export const MoneyFlowController = {
           // CVSCOM  //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟
           // TradeSha //加密DATA 給藍新必填欄位 參數名不可變動
           // TradeInfo //加密DATA 給藍新必填欄位 參數名不可變動
-          // merchantID //商店代號 給藍新必填欄位 參數名不可變動
-          // version //版本號 給藍新必填欄位 參數名不可變動
+          // MerchantID //商店代號 給藍新必填欄位 參數名不可變動
+          // Version //版本號 給藍新必填欄位 參數名不可變動
 
-          const order = req.body;
-          console.log('createOrder req.body',order);
-        
-          const aesEncrypt = create_mpg_aes_encrypt(order);
+
+          // const order = req.body;
+          // console.log('createOrder req.body',order);
+          const data = req.body;
+          console.log('createOrder req.body',data);
+          // const timeStamp = Math.round(new Date().getTime() / 1000);
+
+          const now = new Date();
+          const ordertime = Math.round(Date.now() / 1000); //當前的時間轉換為 10 碼數字的 Unix 時間戳記。
+          // const timeStamp = new Date(ordertime * 1000).toISOString(); //轉換為 ISO 8601 格式的字串。
+          // console.log('ordertime',ordertime, 'timeStamp',timeStamp)
+
+          MoneyFlowController.orders = { //組資料
+            ...data,    //req.body
+            ReturnURL: encodeURIComponent(data.ReturnURL),
+            NotifyURL: encodeURIComponent(data.NotifyURL),
+            TimeStamp: ordertime,  //新增TimeStamp參數
+            MerchantOrderNo: ordertime, //新增MerchantOrderNo參數
+          };
+
+          console.log('MoneyFlowController.orders', MoneyFlowController.orders)
+
+          const aesEncrypt = create_mpg_aes_encrypt(MoneyFlowController.orders);
           console.log('aesEncrypt:', aesEncrypt);
         
           // 使用 HASH 再次 SHA 加密字串，作為驗證使用
@@ -78,22 +99,31 @@ export const MoneyFlowController = {
           console.log('shaEncrypt:', shaEncrypt);
       
           let enOrder = {
-            order,
+            // order: MoneyFlowController.orders,
             aesEncrypt,
             shaEncrypt,
           }
+          console.log('ReturnURL',ReturnURL, 'data.ReturnURL',data.ReturnURL)
           console.log('enOrder',enOrder)
-          const createOrderDB = await MoneyFlowCreateOrder.create({
-            ItemDesc: enOrder.order.ItemDesc,
-            Amt: enOrder.order.Amt,
-            Email: enOrder.order.Email,
-            TimeStamp: enOrder.order.TimeStamp,
-            MerchantOrderNo: enOrder.order.MerchantOrderNo,
+          const createData = {
+            ItemDesc: data.ItemDesc,
+            Amt: data.Amt,
+            Email: data.Email,
+            TimeStamp: ordertime,
+            MerchantOrderNo: ordertime,
+            ReturnURL: ReturnURL,
+            NotifyURL: NotifyURL,
+            EncryptType: data.EncryptType,
+            CVSCOM: data.CVSCOM,
+            CREDIT: data.CREDIT,
             TradeSha: shaEncrypt,
             TradeInfo: aesEncrypt,
             MerchantID: MerchantID,
             Version: Version,
-          })
+          }
+          console.log('createData',createData)
+
+          const createOrderDB = await MoneyFlowCreateOrder.create(createData)
           console.log('createOrderDB',createOrderDB)
 
           res.json(enOrder);

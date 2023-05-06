@@ -1,9 +1,6 @@
-// import handleErrorAsync from "../services/handleErrorAsync"
-// import { appError } from '../services/appError'
-// import { Register } from '../models/Register.model'
 import crypto from "crypto"
 
-export const { MerchantID, HASHKEY, HASHIV, Version, Host } = process.env
+export const { MerchantID, HASHKEY, HASHIV, Version } = process.env
 export const RespondType = 'JSON'
 
 // 字串組合
@@ -13,15 +10,16 @@ export function genDataChain(order) {
     order.TimeStamp
   }&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${
     order.Amt
-  }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${encodeURIComponent(
-    order.Email,
-  )}`;
+  }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${
+    encodeURIComponent(order.Email)
+  }&CREDIT=${order.CREDIT}&CVSCOM=${Number(order.CVSCOM)
+  }&ReturnURL=${order.ReturnURL}&NotifyURL=${order.NotifyURL}`;
 }
 
 // 對應文件 P16：使用 aes 加密
 // $edata1=bin2hex(openssl_encrypt($data1, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv));
 export function create_mpg_aes_encrypt(TradeInfo) {
-  console.log(TradeInfo)
+  console.log('create_mpg_aes_encrypt TradeInfo',TradeInfo)
   const encrypt = crypto.createCipheriv('aes256', HASHKEY, HASHIV);
   // console.log('encrypt',encrypt)
   const enc = encrypt.update(genDataChain(TradeInfo), 'utf8', 'hex');

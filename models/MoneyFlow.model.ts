@@ -51,6 +51,12 @@ const MoneyFlowSchema = new Schema<IMoneyFlowCreateOrder>(
       required: [false, '物流啟用'],
       select: true
     },
+    CREDIT: {
+      type: Number,
+      enum:[0,1],   //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟
+      required: [false, '信用卡一次付清啟用'],
+      select: true
+    },
     TradeSha: {
       type: String,
       required: [true, '缺少SHA256 加密'],
