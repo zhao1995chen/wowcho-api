@@ -33,7 +33,8 @@ export const MoneyFlowController = {
     async get(req: Request, res: Response){
       // 取得env
       try {
-        res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
+        res.json({ title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL}); //vue前後端分離
+        // res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL}); //view/money-flow.ejs
       } catch(e) {
         errorHandler(res, e)
       }
