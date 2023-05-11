@@ -9,8 +9,10 @@ export const moneyFlowRouter = express.Router()
 moneyFlowRouter.get('/', handleErrorAsync(MoneyFlowController.get))
 // 確認訂單送出金流
 moneyFlowRouter.post('/createOrder', handleErrorAsync(MoneyFlowController.createEncode))
-// 訂單交易成功顯示
+// 訂單交易成功資料獲得
 moneyFlowRouter.post('/newebpay-return', handleErrorAsync(MoneyFlowController.mpgReturn))
+// 訂單交易成功資料前端顯示
+moneyFlowRouter.get('/newebpay-return', handleErrorAsync(MoneyFlowController.getMpgReturnView))
 // 確認交易：Notify
 moneyFlowRouter.post('/newebpay-notify', handleErrorAsync(MoneyFlowController.mpgNotify))
 

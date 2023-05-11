@@ -10,7 +10,7 @@ import validator from 'validator'
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '../middlewares/MoneyFlow.middleware'
 
 
-export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnURL, NotifyURL, PayGateWay } = process.env;
+export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnURL, NotifyURL, PayGateWay, FrontendHost } = process.env;
 
 export const MoneyFlowController = {
     // enOrder:{
@@ -30,11 +30,16 @@ export const MoneyFlowController = {
     //   shaEncrypt:''
     // },
     orders: {},
+    mpgReturnData: {
+      Status: "",
+      Message: "",
+      Result: {}
+    },
     async get(req: Request, res: Response){
       // 取得env
       try {
-        res.json({ title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL}); //vue前後端分離
-        // res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL}); //view/money-flow.ejs
+        res.json({ title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
+        // res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
       } catch(e) {
         errorHandler(res, e)
       }
@@ -107,6 +112,9 @@ export const MoneyFlowController = {
           console.log('ReturnURL',ReturnURL, 'data.ReturnURL',data.ReturnURL)
           console.log('enOrder',enOrder)
           const createData = {
+            // 會員等其他資料
+
+            // 藍新資料
             ItemDesc: data.ItemDesc,
             Amt: data.Amt,
             Email: data.Email,
@@ -124,7 +132,7 @@ export const MoneyFlowController = {
           }
           console.log('createData',createData)
 
-          const createOrderDB = await MoneyFlowCreateOrder.create(createData)
+          const createOrderDB = await MoneyFlowCreateOrder.create(createData) //入資料庫
           console.log('createOrderDB',createOrderDB)
 
           res.json(enOrder);
@@ -133,23 +141,35 @@ export const MoneyFlowController = {
           errorHandler(res, e)
       }
     },
-    async mpgReturn(req: Request, res: Response){
+    async mpgReturn(req: Request, res: Response){ //從藍新取得交易結果
       try {
-          // 交易成功：Return （可直接解密，將資料呈現在畫面上）
-          console.log('req.body return data', req.body);
+        // 交易成功：Return （可直接解密，將資料呈現在畫面上）
+        console.log('req.body return data', req.body);
         // 解密交易內容
         const response = req.body
-        const mpgReturnData = await create_mpg_aes_decrypt(response.TradeInfo);
-        // const result = data.Result;
-        console.log('mpgReturn :', mpgReturnData);
+        MoneyFlowController.mpgReturnData = await create_mpg_aes_decrypt(response.TradeInfo);
+        console.log('mpgReturnData',MoneyFlowController.mpgReturnData)
 
-
-        res.render('success', { title: '結帳成功', mpgReturnData });
+        res.redirect(`${FrontendHost}/#/cart/success`) //轉址前端路由頁面
+        // res.render('success', { title: '結帳成功', MoneyFlowController.mpgReturnData }); //view/success.ejs
       } catch(e) {
         errorHandler(res, e)
       }
     },
-    async mpgNotify(req: Request, res: Response, next: NextFunction){
+    async getMpgReturnView(req: Request, res: Response){ //資料載入前端
+      try {
+        let mpgReturnData = await MoneyFlowController.mpgReturnData
+        console.log(mpgReturnData)
+        res.json({ 
+          title: mpgReturnData.Status === "SUCCESS" ? "交易成功" : "交易失敗" , 
+          mpgReturnData 
+        });
+
+      } catch(e) {
+        errorHandler(res, e)
+      }
+    },
+    async mpgNotify(req: Request, res: Response, next: NextFunction){ //從藍新幕後取得交易結果並存資料庫
       try{
         console.log('req.body notify data', req.body);
         const response = req.body;
@@ -176,7 +196,7 @@ export const MoneyFlowController = {
           
           
           // 存進schema資料庫
-          const responseSuccessOrder = await MoneyFlowSuccessOrder.create({     
+          const responseSuccessOrder = await MoneyFlowSuccessOrder.create({
             MerchantID: result.MerchantID,
             Amt: result.Amt,
             TradeNo: result.TradeNo,
