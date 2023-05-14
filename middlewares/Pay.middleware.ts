@@ -6,7 +6,6 @@ export const RespondType = 'JSON'
 
 // 字串組合
 export function genDataChain(order) {
-  console.log('MerchantID',MerchantID)
   return `MerchantID=${MerchantID}&RespondType=${RespondType}&TimeStamp=${
     order.TimeStamp
   }&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${

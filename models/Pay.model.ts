@@ -41,11 +41,10 @@ const PaySchema = new Schema<IPayCreate>(
       required: [false, '支付通知網址'],
       select: true
     },
-    EncryptType: {
-      type: Boolean,     //加密模式 AES256方式加密參帶0, AES GCM方式加密帶1
-      required: [false, '加密模式'],
-      select: true
-    },
+    // EncryptType: {
+    //   required: [false, '加密模式'],
+    //   select: true
+    // },
     CVSCOM: {
       type: Number,
       enum:[0,1,2,3],   //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟

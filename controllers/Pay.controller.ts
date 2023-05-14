@@ -8,7 +8,7 @@ import { errorHandler } from '../services/errorHandler'
 import { ERROR } from '../const'
 
 
-export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnURL, NotifyURL, PayGateWay, FrontendHost } = process.env
+export const { MerchantID, Version, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
 
 export const PayController = {
   mpgReturnData: {
@@ -29,7 +29,7 @@ export const PayController = {
     try{
       // TODO: 添加 ownerId (使用者) proposalUrl (專案網址) planId(方案 id)
       //檢查使用者 body
-      const { Email, ItemDesc, Amt, EncryptType, CVSCOM, CREDIT } =  new Pay(req.body)
+      const { Email, ItemDesc, CVSCOM, CREDIT, Amt } =  new Pay(req.body)
       if(!Email){
         throw { fieldName: 'email', message: ERROR.REQUIRED }
       }
@@ -50,11 +50,11 @@ export const PayController = {
         TimeStamp: Math.round(Date.now()),
         ReturnURL: encodeURIComponent(ReturnURL),
         NotifyURL: encodeURIComponent(NotifyURL),
-        EncryptType: EncryptType,
         CVSCOM: CVSCOM,
         CREDIT: CREDIT,
         MerchantID: MerchantID,
         Version: Version,
+        RespondType: 'JSON',
       }
       // 3. 存 DB 獲得 DB _id
       const newPayData = await Pay.create(createData).catch(() => {
@@ -87,6 +87,7 @@ export const PayController = {
       console.log('req.body return data', req.body)
       // 解密交易內容
       const response = req.body
+      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
       PayController.mpgReturnData = await create_mpg_aes_decrypt(response.TradeInfo)
       console.log('mpgReturnData',PayController.mpgReturnData)
 
@@ -99,19 +100,19 @@ export const PayController = {
   async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
     try{
       const response = req.body
-      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: '回傳資料錯誤' }
+      console.log(req.body)
+      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
 
       const thisShaEncrypt = await create_mpg_sha_encrypt(response.TradeInfo)
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
       if (!thisShaEncrypt === response.TradeSha) {
         console.log('付款失敗：TradeSha 不一致')
-        return res.end()
+        throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       }
-        
+
       // 解密交易內容
       const data = await create_mpg_aes_decrypt(response.TradeInfo)
       const result = data.Result
-      console.log('data.Result:', result)
 
       // 取得交易內容，並查詢本地端資料庫是否有相符的訂單
       // if (!orders[data?.Result?.MerchantOrderNo]) {
