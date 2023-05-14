@@ -84,7 +84,7 @@ export const PayController = {
   async mpgReturn(req: Request, res: Response){ //從藍新取得交易結果
     try {
       // 交易成功：Return （可直接解密，將資料呈現在畫面上）
-      console.log('req.body return data', req.body)
+      console.log('req.body return data', req)
       // 解密交易內容
       const response = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
