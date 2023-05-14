@@ -1,5 +1,5 @@
 
-import { Request, Response, NextFunction } from 'express'
+import { Request, Response } from 'express'
 import { Pay } from '../models/Pay.model'
 import { PayOrder } from '../models/PayOrder.model'
 import validator from 'validator'
@@ -9,7 +9,7 @@ import { ERROR } from '../const'
 
 
 export const { MerchantID, Version, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
-
+console.log(NotifyURL)
 export const PayController = {
   mpgReturnData: {
     Status: '',
@@ -48,8 +48,8 @@ export const PayController = {
         Amt: Amt,
         Email: Email,
         TimeStamp: Math.round(Date.now()),
-        ReturnURL: encodeURIComponent(ReturnURL),
-        NotifyURL: encodeURIComponent(NotifyURL),
+        // ReturnURL: encodeURIComponent(ReturnURL),
+        // NotifyURL: encodeURIComponent(NotifyURL),
         CVSCOM: CVSCOM,
         CREDIT: CREDIT,
         MerchantID: MerchantID,
@@ -60,7 +60,7 @@ export const PayController = {
       const newPayData = await Pay.create(createData).catch(() => {
         throw {  message: '新增錯誤' }
       })
-
+      // console.log('test', encodeURIComponent(ReturnURL), encodeURIComponent(NotifyURL))
       // 將 _id 存為 MerchantOrderNo，並做金流需要加密
       newPayData.MerchantOrderNo = newPayData._id
       // delete newPayData._id
