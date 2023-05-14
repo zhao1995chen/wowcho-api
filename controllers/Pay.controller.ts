@@ -83,14 +83,9 @@ export const PayController = {
   },
   async mpgReturn(req: Request, res: Response){ //從藍新取得交易結果
     try {
-      // 交易成功：Return （可直接解密，將資料呈現在畫面上）
-      console.log('req.body return data', req)
       // 解密交易內容
-      const response = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
-      PayController.mpgReturnData = await create_mpg_aes_decrypt(response.TradeInfo)
-      console.log('mpgReturnData',PayController.mpgReturnData)
-
+      console.log('return',req.body)
       res.redirect(`${FrontendHost}/#/cart/success`) //轉址前端路由頁面
       // res.render('success', { title: '結帳成功', PayController.mpgReturnData }); //view/success.ejs
     } catch(e) {
@@ -99,8 +94,8 @@ export const PayController = {
   },
   async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
     try{
+      console.log('notify',req.body,req)
       const response = req.body
-      console.log(req.body)
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
 
       const thisShaEncrypt = await create_mpg_sha_encrypt(response.TradeInfo)
@@ -113,7 +108,7 @@ export const PayController = {
       // 解密交易內容
       const data = await create_mpg_aes_decrypt(response.TradeInfo)
       const result = data.Result
-
+      console.log(result)
       // 取得交易內容，並查詢本地端資料庫是否有相符的訂單
       // if (!orders[data?.Result?.MerchantOrderNo]) {
       //     console.log('找不到訂單');
@@ -124,40 +119,40 @@ export const PayController = {
           
           
       // 存進schema資料庫
-      const responseSuccessOrder = await PayOrder.create({
-        MerchantID: result.MerchantID,
-        Amt: result.Amt,
-        TradeNo: result.TradeNo,
-        MerchantOrderNo: result.MerchantOrderNo,
-        RespondType: result.RespondType,
-        IP: result.IP,
-        EscrowBank: result.EscrowBank,
-        PaymentType: result.PaymentType,
+      // const responseSuccessOrder = await PayOrder.create({
+      //   MerchantID: result.MerchantID,
+      //   Amt: result.Amt,
+      //   TradeNo: result.TradeNo,
+      //   MerchantOrderNo: result.MerchantOrderNo,
+      //   RespondType: result.RespondType,
+      //   IP: result.IP,
+      //   EscrowBank: result.EscrowBank,
+      //   PaymentType: result.PaymentType,
 
-        RespondCode: result.RespondCode,
-        Auth: result.Auth,
-        Card6No: result.Card6No,
-        Card4No: result.Card4No,
-        Exp: result.Exp,
-        AuthBank: result.AuthBank,
-        TokenUseStatus: result.TokenUseStatus,
-        // InstFirst: result.InstFirst,
-        // InstEach: result.InstEach,
-        // Inst: result.Inst,
-        // ECI: result.ECI,
-        PayTime: result.PayTime,
-        PaymentMethod: result.PaymentMethod,
+      //   RespondCode: result.RespondCode,
+      //   Auth: result.Auth,
+      //   Card6No: result.Card6No,
+      //   Card4No: result.Card4No,
+      //   Exp: result.Exp,
+      //   AuthBank: result.AuthBank,
+      //   TokenUseStatus: result.TokenUseStatus,
+      //   // InstFirst: result.InstFirst,
+      //   // InstEach: result.InstEach,
+      //   // Inst: result.Inst,
+      //   // ECI: result.ECI,
+      //   PayTime: result.PayTime,
+      //   PaymentMethod: result.PaymentMethod,
 
-        StoreCode: result.StoreCode,
-        StoreType: result.StoreType,
-        StoreName: result.StoreName,
-        TradeType: result.TradeType,
-        StoreAddr: result.StoreAddr,
-        CVSCOMName: result.CVSCOMName,
-        CVSCOMPhone: result.CVSCOMPhone,
-        LgsType: result.LgsType,
-        LgsNo: result.LgsNo,
-      })
+      //   StoreCode: result.StoreCode,
+      //   StoreType: result.StoreType,
+      //   StoreName: result.StoreName,
+      //   TradeType: result.TradeType,
+      //   StoreAddr: result.StoreAddr,
+      //   CVSCOMName: result.CVSCOMName,
+      //   CVSCOMPhone: result.CVSCOMPhone,
+      //   LgsType: result.LgsType,
+      //   LgsNo: result.LgsNo,
+      // })
 
       return res.end()
 
