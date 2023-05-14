@@ -21,13 +21,14 @@ const PaySchema = new Schema<IPayCreate>(
       select: true
     },
     TimeStamp: {
-      type: Date,
+      type: Number,
       required: [true, '缺少時間戳記'],
       select: false
     },
     MerchantOrderNo: {
       type: String,
-      required: [true, '缺少商店訂單編號'],
+      default: '',
+      // required: [true, '缺少商店訂單編號'],
       select: true
     },
     ReturnURL: {
@@ -59,12 +60,14 @@ const PaySchema = new Schema<IPayCreate>(
     },
     TradeSha: {
       type: String,
-      required: [true, '缺少SHA256 加密'],
+      default: '',
+      // required: [true, '缺少SHA256 加密'],
       select: true
     },
     TradeInfo: {
       type: String,
-      required: [true, '缺少AES加密 加密'],
+      default: '',
+      // required: [true, '缺少AES加密 加密'],
       select: true
     },
     MerchantID: {

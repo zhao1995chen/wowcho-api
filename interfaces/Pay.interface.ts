@@ -1,17 +1,18 @@
+import { Types } from 'mongoose'
 
 interface IPayCreate {
   ItemDesc: string  //商品品名
   Amt: number  //訂單金額
   Email: string  //付款人信箱 （非收件人
-  TimeStamp: Date    //時間戳記
-  MerchantOrderNo: string  //商店訂單編號
+  TimeStamp: number    //時間戳記
+  MerchantOrderNo?: string| Types.ObjectId;  //商店訂單編號
   ReturnURL: string    //支付完成 返回商店網址
   NotifyURL: string    //支付通知網址
   EncryptType: boolean   //加密模式 AES256方式加密參帶0, AES GCM方式加密帶1
   CVSCOM: number   //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟
   CREDIT: number  //信用卡一次付清啟用 1=啟用 0=不啟用
-  TradeSha: string  //SHA256加密 給藍新必填欄位 參數名不可變動
-  TradeInfo: string  //AES加密 給藍新必填欄位 參數名不可變動
+  TradeSha?: string  //SHA256加密 給藍新必填欄位 參數名不可變動
+  TradeInfo?: string  //AES加密 給藍新必填欄位 參數名不可變動
   MerchantID: string  //商店代號 給藍新必填欄位 參數名不可變動
   Version: string  //版本號 給藍新必填欄位 參數名不可變動
   // aesEncrypt: string;

@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import crypto from 'crypto'
 
 export const { MerchantID, HASHKEY, HASHIV, Version } = process.env
@@ -19,9 +20,7 @@ export function genDataChain(order) {
 // 對應文件 P16：使用 aes 加密
 // $edata1=bin2hex(openssl_encrypt($data1, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv));
 export function create_mpg_aes_encrypt(TradeInfo) {
-  console.log('create_mpg_aes_encrypt TradeInfo',TradeInfo)
   const encrypt = crypto.createCipheriv('aes256', HASHKEY, HASHIV)
-  // console.log('encrypt',encrypt)
   const enc = encrypt.update(genDataChain(TradeInfo), 'utf8', 'hex')
   return enc + encrypt.final('hex')
 }
@@ -31,7 +30,6 @@ export function create_mpg_aes_encrypt(TradeInfo) {
 export function create_mpg_sha_encrypt(aesEncrypt) {
   const sha = crypto.createHash('sha256')
   const plainText = `HashKey=${HASHKEY}&${aesEncrypt}&HashIV=${HASHIV}`
-
   return sha.update(plainText).digest('hex').toUpperCase()
 }
 

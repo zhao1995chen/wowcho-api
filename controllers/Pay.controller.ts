@@ -11,7 +11,6 @@ import { ERROR } from '../const'
 export const { MerchantID, HASHKEY, HASHIV, Version, Host, ReturnURL, NotifyURL, PayGateWay, FrontendHost } = process.env
 
 export const PayController = {
-  orders: {},
   mpgReturnData: {
     Status: '',
     Message: '',
@@ -20,7 +19,7 @@ export const PayController = {
   // async get(req: Request, res: Response){
   //   // 取得env
   //   try {
-  //     res.json({ title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL})
+  //     res.json({ title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
   //     // res.render('money-flow', { title: '確認訂單', Host ,MerchantID, Version, PayGateWay, ReturnURL, NotifyURL});
   //   } catch(e) {
   //     errorHandler(res, e)
@@ -28,93 +27,56 @@ export const PayController = {
   // },
   async createEncode(req: Request, res: Response){
     try{
-      //檢查使用者body
-      console.log('req.body',req.body)
-      const { Email, ItemDesc, Amt, TimeStamp, MerchantOrderNo, ReturnURL, NotifyURL, EncryptType, CVSCOM, CREDIT } =  new Pay(req.body)
-
+      // TODO: 添加 ownerId (使用者) proposalUrl (專案網址) planId(方案 id)
+      //檢查使用者 body
+      const { Email, ItemDesc, Amt, EncryptType, CVSCOM, CREDIT } =  new Pay(req.body)
       if(!Email){
         throw { fieldName: 'email', message: ERROR.REQUIRED }
       }
 
       // 是否為 Email
+      // 1. 認證
       if(!validator.isEmail(Email)){
         throw { fieldName: 'email', message: ERROR.ERROR_FORMAT }
       }
-      // ItemDesc //商品品名
-      // Amt //訂單金額
-      // Email //付款人信箱 （非收件人
-      // TimeStamp   //時間戳記
-      // MerchantOrderNo //商店訂單編號
-      // ReturnURL   //支付完成 返回商店網址
-      // NotifyURL   //支付通知網址
-      // EncryptType  //加密模式 AES256方式加密參帶0, AES GCM方式加密帶1
-      // CVSCOM  //物流啟用 店到店物流啟用 1 = 啟用超商取貨不付款 2 = 啟用超商取貨付款 3 = 啟用超商取貨不付款及超商取貨付款 0 或者未有此參數，即代表不開啟
-      // TradeSha //加密DATA 給藍新必填欄位 參數名不可變動
-      // TradeInfo //加密DATA 給藍新必填欄位 參數名不可變動
-      // MerchantID //商店代號 給藍新必填欄位 參數名不可變動
-      // Version //版本號 給藍新必填欄位 參數名不可變動
 
-
-      // const order = req.body;
-      // console.log('createOrder req.body',order);
-      const data = req.body
-      console.log('createOrder req.body',data)
-      // const timeStamp = Math.round(new Date().getTime() / 1000);
-
-      const ordertime = Math.round(Date.now() / 1000) //當前的時間轉換為 10 碼數字的 Unix 時間戳記。
-      // const timeStamp = new Date(ordertime * 1000).toISOString(); //轉換為 ISO 8601 格式的字串。
-      // console.log('ordertime',ordertime, 'timeStamp',timeStamp)
-
-      PayController.orders = { //組資料
-        ...data,    //req.body
-        ReturnURL: encodeURIComponent(data.ReturnURL),
-        NotifyURL: encodeURIComponent(data.NotifyURL),
-        TimeStamp: ordertime, //新增TimeStamp參數
-        MerchantOrderNo: ordertime, //新增MerchantOrderNo參數
-      }
-
-      console.log('PayController.orders', PayController.orders)
-
-      const aesEncrypt = create_mpg_aes_encrypt(PayController.orders)
-      console.log('aesEncrypt:', aesEncrypt)
-        
-      // 使用 HASH 再次 SHA 加密字串，作為驗證使用
-      const shaEncrypt = create_mpg_sha_encrypt(aesEncrypt)
-      console.log('shaEncrypt:', shaEncrypt)
-      
-      const enOrder = {
-        // order: PayController.orders,
-        aesEncrypt,
-        shaEncrypt,
-      }
-      console.log('ReturnURL',ReturnURL, 'data.ReturnURL',data.ReturnURL)
-      console.log('enOrder',enOrder)
+      // 2. 轉換資料
       const createData = {
         // 會員等其他資料
-
         // 藍新資料
         ItemDesc: ItemDesc,
         Amt: Amt,
         Email: Email,
-        TimeStamp: ordertime,
-        MerchantOrderNo: ordertime,
-        ReturnURL: ReturnURL,
-        NotifyURL: NotifyURL,
+        TimeStamp: Math.round(Date.now()),
+        ReturnURL: encodeURIComponent(ReturnURL),
+        NotifyURL: encodeURIComponent(NotifyURL),
         EncryptType: EncryptType,
         CVSCOM: CVSCOM,
         CREDIT: CREDIT,
-        TradeSha: shaEncrypt,
-        TradeInfo: aesEncrypt,
         MerchantID: MerchantID,
         Version: Version,
       }
-      console.log('createData',createData)
+      // 3. 存 DB 獲得 DB _id
+      const newPayData = await Pay.create(createData).catch((e) => {
+        throw {  message: '新增錯誤' }
+      })
 
-      const createOrderDB = await Pay.create(createData) //入資料庫
-      console.log('createOrderDB',createOrderDB)
+      // 將 _id 存為 MerchantOrderNo，並做金流需要加密
+      newPayData.MerchantOrderNo = newPayData._id
+      // delete newPayData._id
 
-      res.json(enOrder)
-          
+      const aesEncrypt = create_mpg_aes_encrypt(newPayData)
+      // 使用 HASH 再次 SHA 加密字串，作為驗證使用
+      const shaEncrypt = create_mpg_sha_encrypt(aesEncrypt)
+      newPayData.TradeInfo = aesEncrypt
+      newPayData.TradeSha = shaEncrypt
+
+      // 將訂單資訊整理加密後，回傳給前端，前端使用此資料，才能金流認證通過
+      await newPayData.save().catch(() => { 
+        throw { message: '第二次儲存錯誤'}
+      }) 
+      res.json({ aesEncrypt, shaEncrypt })
+
     } catch(e) {
       errorHandler(res, e)
     }
@@ -134,20 +96,7 @@ export const PayController = {
       errorHandler(res, e)
     }
   },
-  async getMpgReturnView(req: Request, res: Response){ //資料載入前端
-    try {
-      const mpgReturnData = await PayController.mpgReturnData
-      console.log(mpgReturnData)
-      res.json({ 
-        title: mpgReturnData.Status === 'SUCCESS' ? '交易成功' : '交易失敗' , 
-        mpgReturnData 
-      })
-
-    } catch(e) {
-      errorHandler(res, e)
-    }
-  },
-  async mpgNotify(req: Request, res: Response, next: NextFunction){ //從藍新幕後取得交易結果並存資料庫
+  async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
     try{
       console.log('req.body notify data', req.body)
       const response = req.body
@@ -208,11 +157,23 @@ export const PayController = {
         LgsType: result.LgsType,
         LgsNo: result.LgsNo,
       })
-      console.log('responseSuccessOrder',responseSuccessOrder)
 
       return res.end()
 
     }catch(e){
+      errorHandler(res, e)
+    }
+  },
+  async getMpgReturnView(req: Request, res: Response){ //資料載入前端
+    try {
+      const mpgReturnData = await PayController.mpgReturnData
+      console.log(mpgReturnData)
+      res.json({ 
+        title: mpgReturnData.Status === 'SUCCESS' ? '交易成功' : '交易失敗' , 
+        mpgReturnData 
+      })
+
+    } catch(e) {
       errorHandler(res, e)
     }
   }
