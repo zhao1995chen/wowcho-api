@@ -13,7 +13,7 @@ export function genDataChain(order) {
   }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${
     encodeURIComponent(order.Email)
   }&CREDIT=${order.CREDIT}&CVSCOM=${Number(order.CVSCOM)
-  }&ReturnURL=${order.ReturnURL}&NotifyURL=${order.NotifyURL}`
+  }`
 }
 
 // 對應文件 P16：使用 aes 加密
