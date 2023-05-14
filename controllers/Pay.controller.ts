@@ -57,7 +57,7 @@ export const PayController = {
         Version: Version,
       }
       // 3. 存 DB 獲得 DB _id
-      const newPayData = await Pay.create(createData).catch((e) => {
+      const newPayData = await Pay.create(createData).catch(() => {
         throw {  message: '新增錯誤' }
       })
 
@@ -98,9 +98,9 @@ export const PayController = {
   },
   async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
     try{
-      console.log('req.body notify data', req.body)
       const response = req.body
-        
+      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: '回傳資料錯誤' }
+
       const thisShaEncrypt = await create_mpg_sha_encrypt(response.TradeInfo)
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
       if (!thisShaEncrypt === response.TradeSha) {
@@ -111,7 +111,7 @@ export const PayController = {
       // 解密交易內容
       const data = await create_mpg_aes_decrypt(response.TradeInfo)
       const result = data.Result
-      console.log('data.Result:', data.Result)
+      console.log('data.Result:', result)
 
       // 取得交易內容，並查詢本地端資料庫是否有相符的訂單
       // if (!orders[data?.Result?.MerchantOrderNo]) {
