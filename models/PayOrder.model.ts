@@ -1,7 +1,7 @@
 // 會員相關
 import { Schema, model } from 'mongoose'
 // import { IPaySuccessOrder } from '../interfaces/MoneyFlow.interface'
-import { IPaySuccessOrder } from '../interfaces/Pay.interface'
+import { IPaySuccessOrder } from '../interfaces/Sponsor.interface'
 // import { MoneyFlowCreateOrder } from './MoneyFlow.model'
 
 const PayOrderSchema = new Schema<IPaySuccessOrder>(

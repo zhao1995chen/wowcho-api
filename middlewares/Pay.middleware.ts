@@ -8,7 +8,7 @@ export const RespondType = 'JSON'
 export function genDataChain(order) {
   return `MerchantID=${MerchantID}&RespondType=${RespondType}&TimeStamp=${
     order.TimeStamp
-  }&Version=${Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${
+  }&Version=${order.Version}&MerchantOrderNo=${order.MerchantOrderNo}&Amt=${
     order.Amt
   }&ItemDesc=${encodeURIComponent(order.ItemDesc)}&Email=${
     encodeURIComponent(order.Email)
