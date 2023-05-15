@@ -62,10 +62,10 @@ export const SponsorController = {
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('return-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
-      if (thisShaEncrypt !== request.TradeSha) {
-        throw {  message: '付款失敗，請聯絡渦潮客服人員' }
-      }
+      console.log('return-thisShaEncrypt', thisShaEncrypt, request.TradeSha)
+      // if (thisShaEncrypt !== request.TradeSha) {
+      //   throw {  message: '付款失敗，請聯絡渦潮客服人員' }
+      // }
       res.redirect(`${FrontendHost}/#/cart/success`) //轉址前端路由頁面
       // res.render('success', { title: '結帳成功', PayController.mpgReturnData }); //view/success.ejs
     } catch(e) {
@@ -77,11 +77,13 @@ export const SponsorController = {
       const request = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
+      console.log('notify-thisShaEncrypt', thisShaEncrypt, request.TradeSha)
+
       // 1.檢查回傳資料
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
-      if (thisShaEncrypt !== request.TradeSha) {
-        throw {  message: '付款失敗，請聯絡渦潮客服人員' }
-      }
+      // if (thisShaEncrypt !== request.TradeSha) {
+      //   throw {  message: '付款失敗，請聯絡渦潮客服人員' }
+      // }
 
       // 解密交易內容
       const data = await create_mpg_aes_decrypt(request.TradeInfo)

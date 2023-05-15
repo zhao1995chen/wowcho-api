@@ -34,12 +34,10 @@ export function create_mpg_sha_encrypt(aesEncrypt) {
 
 // 將 aes 解密
 export function create_mpg_aes_decrypt(TradeInfo) {
-  console.log('create_mpg_aes_decrypt TradeInfo',TradeInfo)
   const decrypt = crypto.createDecipheriv('aes256', HASHKEY, HASHIV)
   decrypt.setAutoPadding(false)
   const text = decrypt.update(TradeInfo, 'hex', 'utf8')
   const plainText = text + decrypt.final('utf8')
   const result = plainText.replace(/[\x00-\x20]+/g, '')
-  console.log('create_mpg_aes_decrypt result', result)
   return JSON.parse(result)
 }
