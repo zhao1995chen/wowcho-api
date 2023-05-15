@@ -71,10 +71,9 @@ export const SponsorController = {
       console.log(response)
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
       const thisShaEncrypt = await create_mpg_sha_encrypt(response.TradeInfo)
-      console.log('thisShaEncrypt',thisShaEncrypt)
       // 1.檢查回傳資料
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
-      if (!thisShaEncrypt === response.TradeSha) {
+      if (thisShaEncrypt !== response.TradeSha) {
         throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       }
 
@@ -83,12 +82,12 @@ export const SponsorController = {
       const result = data.Result
       console.log(result)
       // 2. 透過回傳資料 MerchantOrderNo，查詢資料庫 (id)
-      const sponsor = await Sponsor.findOne({ _id: result.MerchantOrderNo })
+      const findSponsor = await Sponsor.findOne({ _id: result.MerchantOrderNo })
       // 3. 調整資料庫資料
       let newSponsor = null
       newSponsor = {
         // 原本有的資料 
-        ...sponsor,
+        ...findSponsor,
         // 添加藍新回傳後資料
         IP: result.IP,
         TradeNo: result.TradeNo,
@@ -117,12 +116,17 @@ export const SponsorController = {
         newSponsor.LgsNo = result.LgsNo
         break
       }
+      console.log(newSponsor)
+
       // 4.將修改後資料存至資料庫
-      await Sponsor.findByIdAndUpdate(sponsor._id,newSponsor,{
+      await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
         new: true, // 返回更新後的文檔
         upsert: false, // 如果沒找到匹配的文檔，不要創建新文檔
         runValidators: true, // 觸發 Schema 驗證
+      }).catch((e) => {
+        throw {  message: `更新錯誤:${e}` }
       })
+
       return res.end()
     }catch(e){
       errorHandler(res, e)
