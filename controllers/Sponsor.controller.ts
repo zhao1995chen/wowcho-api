@@ -9,11 +9,6 @@ import { ERROR } from '../const'
 
 export const { MerchantID, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
 export const SponsorController = {
-  mpgReturnData: {
-    Status: '',
-    Message: '',
-    Result: {}
-  },
   async createEncode(req: Request, res: Response){
     try{
       // TODO: 添加 ownerId (使用者) proposalUrl (專案網址) planId(方案 id)
@@ -60,17 +55,16 @@ export const SponsorController = {
     try {
       // 解密交易內容
 
-      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
+      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('return-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
-      console.log('return', request )
+      const data = await create_mpg_aes_decrypt(request.TradeInfo)
+      console.log('return-thisShaEncrypt', data)
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
       if( thisShaEncrypt !== request.TradeSha || !request.Status ){
-        throw { message: '回傳錯誤' }
+        throw { message: '付款失敗，請聯絡渦潮客服人員' }
       }
       res.redirect(`${FrontendHost}/#/cart/success`) //轉址前端路由頁面
-      // res.render('success', { title: '結帳成功', PayController.mpgReturnData }); //view/success.ejs
     } catch(e) {
       errorHandler(res, e)
     }
@@ -78,12 +72,10 @@ export const SponsorController = {
   async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
     try{
       const request = req.body
-      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
+      if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('notify-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
-      console.log('notify', request )
       // 1.檢查回傳資料
-      // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
+      // 使用 HASH 再次 SHA 加密字串，確保比對一致、藍新狀態碼錯誤， 回傳錯誤
       if (thisShaEncrypt !== request.TradeSha || !request.Status ) {
         throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       }
