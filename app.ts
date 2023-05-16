@@ -1,8 +1,8 @@
 import express from 'express'
 
 import { uploadRouter } from './routes/Upload.route'
+import { proposalRouter } from './routes/Proposal.route'
 import { promisesRouter } from './routes/Promises.route'
-
 import { userRouter } from './routes/User.route'
 import { faqRouter } from './routes/Faq.route'
 import { sponsorRouter } from './routes/Sponsor.route'
@@ -20,6 +20,7 @@ app.use('/upload', uploadRouter)
 app.use('/sponsors', sponsorRouter)  //送出金流
 
 app.use('/profile', userRouter)
+app.use('/proposal', proposalRouter)
 app.use('/proposal/faq', faqRouter)
 app.use('/proposal/promises', promisesRouter)
 
