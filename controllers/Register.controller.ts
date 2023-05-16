@@ -15,11 +15,11 @@ export const RegisterController = {
     async create(req: Request, res: Response, next: NextFunction): Promise<void>{
         try{
             //檢查使用者body
-            console.log(req.body)
+            // console.log(req.body)
             let { email, password, account, } =  new Register(req.body);
             // let confirmPassword = req.body.confirmPassword
             // 內容不可為空
-            console.log(email, password,  account)
+            // console.log(email, password,  account)
             if(!email||!password||!account){
                 return next(appError(400,"請填寫必填欄位！",next));
             }
@@ -43,7 +43,7 @@ export const RegisterController = {
                 password,
                 account
             });
-            console.log("newUser",newUser)
+            // console.log("newUser",newUser)
         
             //jwt加密TOKEN 給前端
             generateSendJWT(newUser,201,res);
