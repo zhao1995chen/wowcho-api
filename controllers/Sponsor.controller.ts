@@ -64,7 +64,7 @@ export const SponsorController = {
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
       console.log('return-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
-      console.log( request )
+      console.log('return', request )
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
       if( thisShaEncrypt !== request.TradeSha || request.Status ){
         throw { message: '回傳錯誤' }
@@ -80,8 +80,8 @@ export const SponsorController = {
       const request = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('return-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
-      console.log( request )
+      console.log('notify-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
+      console.log('notify', request )
       // 1.檢查回傳資料
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
       if (thisShaEncrypt !== request.TradeSha || request.Status ) {
