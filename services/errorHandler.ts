@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { HEADERS } from '../const'
-import { Error as MongooseError } from 'mongoose';
+import { Error as MongooseError } from 'mongoose'
 
 export const errorHandler = (res: Response, e?: any) => {
   // console.log('errorHandler', e)
