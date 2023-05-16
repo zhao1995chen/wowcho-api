@@ -32,6 +32,7 @@ export const SponsorController = {
         TimeStamp: Math.round(Date.now()),
         Version: '2.0',
         RespondType: 'JSON',
+        CREDIT: 1,
         MerchantOrderNo: sponsorData._id
         // ReturnURL: encodeURIComponent(ReturnURL),
         // NotifyURL: encodeURIComponent(NotifyURL),

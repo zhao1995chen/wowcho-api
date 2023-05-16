@@ -55,7 +55,7 @@ interface ISponsor {
   projectTitle: string // 贊助專案名稱,
   // orderSpecification: ISpecification[] // 會員選擇贊助方案規格
   remark: string, // 備註
-  option: string[] // 方案規格
+  option: string [] // 方案規格
   address: string, // 購買人地址
 }
 
