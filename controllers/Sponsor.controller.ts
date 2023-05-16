@@ -67,7 +67,7 @@ export const SponsorController = {
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
       const data = await create_mpg_aes_decrypt(request.TradeInfo)
-      console.log('return Data', data)
+      console.log('return Data', data, data.Result)
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
       if( thisShaEncrypt !== request.TradeSha || !request.Status ){
         throw { message: '付款失敗，請聯絡渦潮客服人員' }
@@ -148,10 +148,12 @@ export const SponsorController = {
       await plan.save().catch((e) => {
         throw {  message: `更新錯誤:${e}` }
       })
+      console.log(plan)
       // await plan.addNowBuyers()
 
       return res.end()
     }catch(e){
+      console.log(e)
       errorHandler(res, e)
     }
   },
