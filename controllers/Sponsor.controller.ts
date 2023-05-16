@@ -73,8 +73,8 @@ export const SponsorController = {
         throw { message: '付款失敗，請聯絡渦潮客服人員' }
       }
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
-      // ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime}
-      res.redirect(`${FrontendHost}/#/cart/success?ItemDesc=${data.Result.ItemDesc}&PaymentType=${data.Result.PaymentType}&PayTime=${data.Result.PayTime}`) //轉址前端路由頁面
+      // ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime} 
+      res.redirect(`${FrontendHost}/#/cart/success?`) //轉址前端路由頁面
     } catch(e) {
       errorHandler(res, e)
     }
@@ -137,8 +137,8 @@ export const SponsorController = {
       console.log('sponsor',sponsor)
       //  plan
       const plan = await Plan.findById({ _id: sponsor.planId })
-      // console.log('plan', plan)
-      plan.nowBuyers += 1
+      console.log('plan', plan)
+      plan.nowBuyers + 1
       if (plan.quantity === null) {
         await plan.save().catch((e) => {
           throw {  message: `更新錯誤:${e}` }
@@ -148,7 +148,7 @@ export const SponsorController = {
       await plan.save().catch((e) => {
         throw {  message: `更新錯誤:${e}` }
       })
-      console.log(plan)
+      console.log('await',plan)
       // await plan.addNowBuyers()
 
       return res.end()
