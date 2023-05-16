@@ -1,8 +1,8 @@
 // const jwt = require('jsonwebtoken');
 import jwt from 'jsonwebtoken'
-import handleErrorAsync from "../services/handleErrorAsync"
-import { appError } from '../services/appError';
-import { Register } from '../models/Register.model';
+import handleErrorAsync from '../services/handleErrorAsync'
+import { appError } from '../services/appError'
+import { Register } from '../models/Register.model'
 
 // 驗證是否登入狀態 , jwt驗證 token 正確性
 export const isAuth = handleErrorAsync(async (req, res, next) => {
