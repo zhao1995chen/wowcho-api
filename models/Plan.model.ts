@@ -128,7 +128,8 @@ PlanSchema.methods.addNowBuyers = function() {
 }
 
 // 購買時若 商品數量 不等於 null ，減少商品總數
-PlanSchema.methods.removeQuantity = function() {
+PlanSchema.methods.addNowBuyers = function() {
+  this.nowBuyers += 1
   if (this.quantity === null) {
     return
   }

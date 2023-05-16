@@ -5,6 +5,7 @@ import { Sponsor } from '../models/Sponsor.model'
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '../middlewares/Pay.middleware'
 import { errorHandler } from '../services/errorHandler'
 import { ERROR } from '../const'
+import { Plan } from '../models/Plan.model'
 
 
 export const { MerchantID, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
@@ -12,12 +13,19 @@ export const SponsorController = {
   async createEncode(req: Request, res: Response){
     try{
       // TODO: 添加 ownerId (使用者) proposalUrl (專案網址) planId(方案 id)
+      const { planId } = req.body
+      const plan = await Plan.findById({ _id: planId }).catch(()=>{
+        throw { message: '方案 ID 錯誤'}
+      })
+      if (plan.quantity !== null && plan.quantity <= 0 ){
+        throw { message: '此方案數量為 0'}
+      }
       // 1. 檢查使用者 body 、 驗證 planId 是否還有數量
       const newSponsor =  new Sponsor(req.body)
       const validateError = newSponsor.validateSync()
       if (validateError) throw validateError
       const sponsorData = newSponsor.toObject() // 或者 newSponsor.toJSON();
-
+      
       // 2. 轉換資料
       const createData = {
         // 會員等其他資料
@@ -115,14 +123,20 @@ export const SponsorController = {
         LgsType: result.LgsType ? result.LgsType : '',
         LgsNo: result.LgsNo ? result.LgsNo : '',
       }
-      // 4.將修改後資料存至資料庫
-      await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
+      // 4.將修改後資料存至資料庫、同時減少 plan 數量資料
+
+      const sponsor = await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
         new: true, // 返回更新後的文檔
         upsert: false, // 如果沒找到匹配的文檔，不要創建新文檔
         runValidators: true, // 觸發 Schema 驗證
       }).catch((e) => {
         throw {  message: `更新錯誤:${e}` }
       })
+      console.log('sponsor',sponsor)
+      //  plan
+      const plan = await Plan.findById({ _id: sponsor.planId })
+      console.log('plan', plan)
+      await plan.addNowBuyers()
 
       return res.end()
     }catch(e){

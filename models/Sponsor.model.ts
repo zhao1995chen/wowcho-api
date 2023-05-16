@@ -115,7 +115,7 @@ const SponsorSchema = new Schema<ISponsor>(
       type: Schema.Types.ObjectId,
       ref: 'user'
     },
-    orderPlanId: {
+    planId: {
       type: Schema.Types.ObjectId,
       ref: 'plan'
     },

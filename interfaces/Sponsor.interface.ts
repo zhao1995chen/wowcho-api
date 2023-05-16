@@ -50,7 +50,7 @@ interface ISponsor {
 
   // 渦潮自己資料庫需要欄位，新建時觸發
   ownerId: Types.ObjectId | string // 購買會員 id
-  orderPlanId: Types.ObjectId | string  // 贊助方案 id,
+  planId: Types.ObjectId | string  // 贊助方案 id,
   payStatus: boolean, // 是否付款
   projectTitle: string // 贊助專案名稱,
   // orderSpecification: ISpecification[] // 會員選擇贊助方案規格
