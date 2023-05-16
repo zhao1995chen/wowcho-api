@@ -62,7 +62,8 @@ export const SponsorController = {
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Return 回傳資料錯誤' }
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('return-thisShaEncrypt', thisShaEncrypt, request.TradeSha)
+      console.log('return-thisShaEncrypt', thisShaEncrypt, request.TradeSha, thisShaEncrypt !== request.TradeSha)
+      console.log('return requset', request)
       // if (thisShaEncrypt !== request.TradeSha) {
       //   throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       // }
@@ -77,7 +78,7 @@ export const SponsorController = {
       const request = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: 'Notify 回傳資料錯誤' }
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
-      console.log('notify-thisShaEncrypt', thisShaEncrypt, request.TradeSha)
+      console.log('notify-thisShaEncrypt', thisShaEncrypt, request.TradeSha, thisShaEncrypt !== request.TradeSha)
 
       // 1.檢查回傳資料
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
@@ -89,12 +90,13 @@ export const SponsorController = {
       const data = await create_mpg_aes_decrypt(request.TradeInfo)
       const result = data.Result
       // 2. 透過回傳資料 MerchantOrderNo，查詢資料庫 (id)
-      const findSponsor = await Sponsor.findOne({ _id: result.MerchantOrderNo })
+      const findSponsor = await (await Sponsor.findOne({ _id: result.MerchantOrderNo })).toObject()
       // 3. 調整資料庫資料
+      findSponsor.payStatus = true
       let newSponsor = null
       newSponsor = {
         // 原本有的資料 
-        ...findSponsor.toObject(),
+        ...findSponsor,
         // 添加藍新回傳後資料
         IP: result.IP,
         TradeNo: result.TradeNo,
@@ -119,29 +121,6 @@ export const SponsorController = {
         LgsType: result.LgsType ? result.LgsType : '',
         LgsNo: result.LgsNo ? result.LgsNo : '',
       }
-      // switch (result.PaymentType) {
-      // case 'CREDIT':
-      //   newSponsor.Auth = result.Auth
-      //   newSponsor.Card6No = result.Card6No
-      //   newSponsor.Card4No = result.Card4No
-      //   newSponsor.AuthBank = result.AuthBank
-      //   newSponsor.PayTime = result.PayTime
-      //   newSponsor.PaymentMethod = result.PaymentMethod
-      //   break
-      // case 'CVSCOM':
-      //   newSponsor.StoreCode = result.StoreCode
-      //   newSponsor.StoreType = result.StoreType
-      //   newSponsor.StoreName = result.StoreName
-      //   newSponsor.TradeType = result.TradeType
-      //   newSponsor.StoreAddr = result.StoreAddr
-      //   newSponsor.CVSCOMName = result.CVSCOMName
-      //   newSponsor.CVSCOMPhone = result.CVSCOMPhone
-      //   newSponsor.LgsType = result.LgsType
-      //   newSponsor.LgsNo = result.LgsNo
-      //   break
-      // }
-      console.log(newSponsor)
-
       // 4.將修改後資料存至資料庫
       await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
         new: true, // 返回更新後的文檔
@@ -156,18 +135,5 @@ export const SponsorController = {
       errorHandler(res, e)
     }
   },
-  async getMpgReturnView(req: Request, res: Response){ //資料載入前端
-    try {
-      const mpgReturnData = await SponsorController.mpgReturnData
-      console.log(mpgReturnData)
-      res.json({ 
-        title: mpgReturnData.Status === 'SUCCESS' ? '交易成功' : '交易失敗' , 
-        mpgReturnData 
-      })
-
-    } catch(e) {
-      errorHandler(res, e)
-    }
-  }
 }
 

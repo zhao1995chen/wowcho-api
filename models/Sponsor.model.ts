@@ -131,8 +131,14 @@ const SponsorSchema = new Schema<ISponsor>(
       type: String,
       default: '',
     },
-    orderSpecification: [ specificationSchema ]
-
+    option :{
+      type: []
+    },
+    address:{
+      type: String,
+      default: '',
+    }
+    // orderSpecification: [ specificationSchema ]
     // ReturnURL: {
     //   type: String,
     //   required: [false, '返回商店網址'],

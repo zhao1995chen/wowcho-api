@@ -53,44 +53,10 @@ interface ISponsor {
   orderPlanId: Types.ObjectId | string  // 贊助方案 id,
   payStatus: boolean, // 是否付款
   projectTitle: string // 贊助專案名稱,
-  orderSpecification: ISpecification[] // 會員選擇贊助方案規格
-  remark: string,
-
-}
-
-// 藍新交易成功回傳
-interface IPaySuccessOrder {
-  //============交易成功基本參數============
-  MerchantID: string  //商店代號 給藍新必填欄位 參數名不可變動
-  Amt: number  //訂單金額
-  MerchantOrderNo: string  //商店訂單編號
-  RespondType: string //回傳格式
-  IP: string  //付款人交易IP
-  PaymentType: string //支付方式
-
-  //============信用卡一次付清============
-  Card6No: string //卡號前六碼
-  Card4No: string //卡號末四碼
-  Exp: string //?
-  AuthBank: string //收單金融機構
-  TokenUseStatus: number //分期-首期金額
-  InstFirst: number //分期-首期金額
-  InstEach: number //分期-每期金額
-  Inst: number //分期-期別
-  ECI: string //ECI值 eci=1,2,5,6，代表為 3D 交易,空值為失敗
-  PayTime: string //支付完成時間 回傳格式為:2014-06-25 16:43:49, 超商取貨以空值回傳
-  PaymentMethod: string //交易類別
-
-  //============物流店到店============
-  StoreCode: string //超商取貨門市編號
-  StoreType: string //超商類別名稱
-  StoreName: string //超商取貨門市名稱
-  TradeType: string //取件交易方式
-  StoreAddr: string //取貨人姓名
-  CVSCOMName: string //取貨人姓名
-  CVSCOMPhone: string //取貨人手機號碼
-  LgsType: string //物流型態 'B2C','C2C'
-  LgsNo: string //物流寄件單號(寄件代碼)
+  // orderSpecification: ISpecification[] // 會員選擇贊助方案規格
+  remark: string, // 備註
+  option: string[] // 方案規格
+  address: string, // 購買人地址
 }
 
 export {
