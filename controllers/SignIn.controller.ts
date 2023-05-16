@@ -14,7 +14,7 @@ export const SignInController = {
     async signIn(req: Request, res: Response, next: NextFunction){
         try{
             //檢查使用者body
-            console.log(req.body)
+            // console.log(req.body)
             const { account, password } =  new Register(req.body);
 
             if (!account || !password) {
@@ -28,7 +28,7 @@ export const SignInController = {
 
             // 找出資料庫Document
             const user = await Register.findOne({ account }).select('+password');
-            console.log(user)
+            // console.log(user)
             if(!user){
                 return next(appError(400,'帳號或密碼有誤，請重新輸入',next));
             }

@@ -30,10 +30,10 @@ export const isAuth = handleErrorAsync(async (req, res, next) => {
         }
       })
     })
-    console.log('decoded',decoded) //解密的payload
+    // console.log('decoded',decoded) //解密的payload
     
     const currentUser = await Register.findById((decoded as { id: string }).id);
-    console.log(currentUser)
+    // console.log(currentUser)
 
     req.user = currentUser;
     next();
@@ -46,7 +46,7 @@ export const generateSendJWT= (user,statusCode,res)=>{
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 
-  console.log("generateSendJWT", token) //產生JWT臨時通行證
+  // console.log("generateSendJWT", token) //產生JWT臨時通行證
 
   // 組給前端的response訊息
   user.password = undefined;
