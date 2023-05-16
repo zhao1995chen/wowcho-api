@@ -60,8 +60,16 @@ export const ProposalController = {
     // 註冊 plan 資源
     console.assert(Plan)
     try {
+      let query = null
+
       const id = req.query.id // 指定 proposal id
-      const proposal = await Proposal.findById<IProposal>({ _id:id }).populate('planIdList')
+      const proposalUrl = req.query.proposalUrl
+      if (id !== undefined) {
+        query = {_id: id}
+      } else {
+        query = {customizedUrl: proposalUrl }
+      }
+      const proposal = await Proposal.findById<IProposal>(query).populate('planIdList')
         .catch(()=> {
           throw '募資活動 ID 錯誤'
         })

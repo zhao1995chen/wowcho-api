@@ -50,6 +50,9 @@ interface IProposal extends Document {
 	contentsId: string
 	// 狀態 0 = 草稿，前台看不到 1 = 上架
 	status: eStatus
+	contact: string;
+	risk: string;
+	refund: string;
 	// 關聯
 	// 提案人
 	ownerId: Types.ObjectId;
@@ -60,7 +63,6 @@ interface IProposal extends Document {
 	// 常見問答id列表
 	faqIdList: Array<Types.ObjectId>;
 	// 承諾與告示id列表
-	promiseId:Array<Types.ObjectId>;
 	placardIdList: Array<Types.ObjectId>;
 }
 interface IProposalDocument extends IProposal {

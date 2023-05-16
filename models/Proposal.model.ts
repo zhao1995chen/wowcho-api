@@ -2,8 +2,6 @@ import { Schema,model } from 'mongoose'
 import { IProposalDocument, eAgeLimit, eCategory, eStatus } from '../interfaces/Proposal.interface'
 import { v4 as uuidv4 } from 'uuid'
 import { urlRegex, checkStringNotBlank,  checkGreaterCurrentTimeOrNull, numberIsGreaterThanZero } from '../method/model.method'
-import { Plan } from './Plan.model'
-
 
 const ProposalSchema = new Schema<IProposalDocument>(
   {
@@ -102,25 +100,31 @@ const ProposalSchema = new Schema<IProposalDocument>(
         message: '不能為空'
       },
     },
+    contact: {
+      type: String,
+      default: '',
+    },
+    risk: {
+      type: String,
+      default: '',
+    },
+    refund: {
+      type: String,
+      default: '',
+    },
     status: {
       type: Number,
       default: 1,
       enum: eStatus
     },
     // 關聯
-    planIdList:[
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'plan',
-      }
-    ],
+    planIdList: [{
+      type: Schema.Types.ObjectId,
+      ref: 'plan',
+    }],
     faqIdList:  [{
       type: Schema.Types.ObjectId,
       ref: 'faq'
-    }],
-    promiseId: [{
-      type: Schema.Types.ObjectId,
-      ref: 'promise'
     }],
   },
   {
