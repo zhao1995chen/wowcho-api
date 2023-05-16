@@ -74,7 +74,7 @@ export const SponsorController = {
       }
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
       // ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime}
-      res.redirect(`${FrontendHost}/#/cart/success?`) //轉址前端路由頁面
+      res.redirect(`${FrontendHost}/#/cart/success?ItemDesc=${data.Result.ItemDesc}&PaymentType=${data.Result.PaymentType}&PayTime=${data.Result.PayTime}`) //轉址前端路由頁面
     } catch(e) {
       errorHandler(res, e)
     }
@@ -140,10 +140,14 @@ export const SponsorController = {
       // console.log('plan', plan)
       plan.nowBuyers += 1
       if (plan.quantity === null) {
-        await plan.save()
+        await plan.save().catch((e) => {
+          throw {  message: `更新錯誤:${e}` }
+        })
       }
       plan.quantity - 1 
-      await this.save()
+      await plan.save().catch((e) => {
+        throw {  message: `更新錯誤:${e}` }
+      })
       // await plan.addNowBuyers()
 
       return res.end()
