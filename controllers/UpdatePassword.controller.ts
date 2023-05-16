@@ -3,8 +3,8 @@ import { Request, Response, NextFunction } from 'express'
 import { appError } from '../services/appError';
 import { errorHandler } from '../services/errorHandler'
 import { Register } from '../models/Register.model';
-import { IRegister } from '../interfaces/Register.interface'
-import { successHandler } from '../services/successHandler'
+// import { IRegister } from '../interfaces/Register.interface'
+// import { successHandler } from '../services/successHandler'
 import validator from 'validator'
 import bcrypt from 'bcryptjs'
 import { generateSendJWT } from '../middlewares/auth'
@@ -26,9 +26,9 @@ export const UpdatePasswordController = {
             }
 
             const account = req.user.account
-            console.log('req.user',account)
+            // console.log('req.user',account)
             const user = await Register.findOne({ account }).select('+password');
-            console.log(user)
+            // console.log(user)
             const auth = await bcrypt.compare(oldPassword, user.password);
             if(!auth){
               return next(appError(400,'您的舊密碼不正確',next));
@@ -43,11 +43,11 @@ export const UpdatePasswordController = {
             const setUser = await Register.findByIdAndUpdate(req.user,{
               password: hashNewPassword
             });
-            console.log("setUser",setUser)
+            // console.log("setUser",setUser)
             generateSendJWT(setUser,200,res)
 
         } catch(e) {
-            console.log(res)
+            // console.log(res)
             errorHandler(res, e)
         }
     },
