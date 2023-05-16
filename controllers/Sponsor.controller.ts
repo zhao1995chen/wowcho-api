@@ -67,12 +67,14 @@ export const SponsorController = {
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
       const data = await create_mpg_aes_decrypt(request.TradeInfo)
+      console.log('return Data', data)
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
       if( thisShaEncrypt !== request.TradeSha || !request.Status ){
         throw { message: '付款失敗，請聯絡渦潮客服人員' }
       }
-      // 轉址 query 戴上，方案名稱、付款方式、付款實踐
-      res.redirect(`${FrontendHost}/#/cart/success?ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime}`) //轉址前端路由頁面
+      // 轉址 query 戴上，方案名稱、付款方式、付款時間
+      // ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime}
+      res.redirect(`${FrontendHost}/#/cart/success?`) //轉址前端路由頁面
     } catch(e) {
       errorHandler(res, e)
     }
@@ -135,8 +137,14 @@ export const SponsorController = {
       console.log('sponsor',sponsor)
       //  plan
       const plan = await Plan.findById({ _id: sponsor.planId })
-      console.log('plan', plan)
-      await plan.addNowBuyers()
+      // console.log('plan', plan)
+      plan.nowBuyers += 1
+      if (plan.quantity === null) {
+        await plan.save()
+      }
+      plan.quantity - 1 
+      await this.save()
+      // await plan.addNowBuyers()
 
       return res.end()
     }catch(e){
