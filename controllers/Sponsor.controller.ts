@@ -66,7 +66,7 @@ export const SponsorController = {
       console.log('return-thisShaEncrypt', thisShaEncrypt, thisShaEncrypt !== request.TradeSha)
       console.log('return', request )
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
-      if( thisShaEncrypt !== request.TradeSha || request.Status ){
+      if( thisShaEncrypt !== request.TradeSha || !request.Status ){
         throw { message: '回傳錯誤' }
       }
       res.redirect(`${FrontendHost}/#/cart/success`) //轉址前端路由頁面
@@ -84,7 +84,7 @@ export const SponsorController = {
       console.log('notify', request )
       // 1.檢查回傳資料
       // 使用 HASH 再次 SHA 加密字串，確保比對一致（確保不正確的請求觸發交易成功）
-      if (thisShaEncrypt !== request.TradeSha || request.Status ) {
+      if (thisShaEncrypt !== request.TradeSha || !request.Status ) {
         throw {  message: '付款失敗，請聯絡渦潮客服人員' }
       }
 
