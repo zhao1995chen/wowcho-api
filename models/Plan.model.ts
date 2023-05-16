@@ -121,15 +121,18 @@ const PlanSchema = new Schema<IPlanDocument>(
   }
 )
 
-// 購買時增加方案購買數亮
-PlanSchema.methods.addNowBuyers = function() {
+// 購買時增加方案購買數量、商品數量 不等於 null ，減少商品總數
+PlanSchema.methods.addNowBuyers = async function() {
   this.nowBuyers += 1
-  return this.save()
+  if (this.quantity === null) {
+    await this.save()
+  }
+  this.quantity - 1 
+  await this.save()
 }
 
 // 購買時若 商品數量 不等於 null ，減少商品總數
-PlanSchema.methods.addNowBuyers = function() {
-  this.nowBuyers += 1
+PlanSchema.methods.removeQuantity = function() {
   if (this.quantity === null) {
     return
   }
