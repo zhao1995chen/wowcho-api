@@ -150,16 +150,12 @@ ProposalSchema.methods.removePlan = function(array) {
 }
 
 // 購買時增加當前購買數
-ProposalSchema.methods.addNowBuyers = function() {
+ProposalSchema.methods.sponsorToPlan = function(Price:number) {
   this.nowBuyers += 1
-  return this.save()
+  this.nowPrice += Price
+  return this
 }
 
-// 購買時增加當前募資總金額
-ProposalSchema.methods.addNowPrice = function(Price:number) {
-  this.nowPrice += Price
-  return this.save()
-}
 
 const Proposal = model<IProposalDocument>('proposal', ProposalSchema)
 
