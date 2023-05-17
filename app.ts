@@ -1,9 +1,13 @@
 import express from 'express'
 import cors from 'cors' 
 
+
 import { registerRouter } from './routes/Register.route'
-import { userRouter } from './routes/User.route'
 import { uploadRouter } from './routes/Upload.route'
+import { promisesRouter } from './routes/Promises.route'
+
+import { userRouter } from './routes/User.route'
+import { faqRouter } from './routes/Faq.route'
 
 const app = express()
 
@@ -15,6 +19,8 @@ app.use('/upload', uploadRouter)
 
 app.use('/sign-up', registerRouter)    //註冊
 app.use('/profile', userRouter)
+app.use('/proposal/faq', faqRouter)
+app.use('/proposal/promises', promisesRouter)
 
 
 
