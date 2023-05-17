@@ -52,7 +52,7 @@ export const generateSendJWT= (user,statusCode,res)=>{
   user.password = undefined;
   res.status(statusCode).json({ //statusCode:201成功
     code: statusCode,
-    message: 'Success',
+    status: 'Success',
     data:{
       token,
       name: user.name
