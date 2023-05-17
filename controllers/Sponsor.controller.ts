@@ -1,12 +1,12 @@
 
 import { Request, Response } from 'express'
 import { Sponsor } from '../models/Sponsor.model'
-// import { PayOrder } from '../models/PayOrder.model'
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '../middlewares/Pay.middleware'
 import { errorHandler } from '../services/errorHandler'
-import { ERROR } from '../const'
+import { successHandler } from '../services/successHandler'
+// import { ERROR } from '../const'
 import { Plan } from '../models/Plan.model'
-
+import { Proposal } from '../models/Proposal.model'
 
 export const { MerchantID, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
 export const SponsorController = {
@@ -134,25 +134,16 @@ export const SponsorController = {
       }).catch((e) => {
         throw {  message: `更新錯誤:${e}` }
       })
-      console.log('sponsor',sponsor)
-      //  plan
       const plan = await Plan.findById({ _id: sponsor.planId })
-      console.log('plan', plan)
-      plan.nowBuyers += 1
-      if (plan.quantity !== null) {
-        plan.quantity -= 1 
-      }
-      await plan.save().catch((e) => {
-        throw {  message: `更新錯誤:${e}` }
-      })
-      console.log('await',plan)
-      // await plan.addNowBuyers()
-
-      return res.end()
+      const newPlan = plan.sponsorToPlan()
+      const proposal = await Proposal.findOne({ customizedUrl: newPlan.proposalUrl })
+      const newProposal = proposal.sponsorToPlan(newPlan.actualPrice)
+      await newPlan.save()
+      await newProposal.save()
+      successHandler(res, {plan:newPlan , proposal:newProposal})
     }catch(e){
       console.log(e)
       errorHandler(res, e)
     }
   },
 }
-

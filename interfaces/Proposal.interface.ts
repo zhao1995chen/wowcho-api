@@ -68,15 +68,13 @@ interface IProposal extends Document {
 interface IProposalDocument extends IProposal {
   pushPlan: (id: Types.ObjectId) => void;
   removePlan: (array) => void;
-  addNowBuyers: () => void;
-  addNowPrice: (number) => void;
+  sponsorToPlan: (number) => IProposalDocument;
 }
 
 interface IProposalQuery {
   category?: number;
   endTime?: { $gte: number };
 }
-
 
 export {
   IProposalDocument,

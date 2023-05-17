@@ -27,16 +27,16 @@ const specificationSchema = new Schema({
 
 const PlanSchema = new Schema<IPlanDocument>(
   {
-    proposalId: {
-      type: Schema.Types.ObjectId,
-      required: [ true, '募資專案 ID 必填' ]
+    proposalUrl: {
+      type:String,
+      required: [ true, '募資活動專屬 URL 必填' ]
     },
     image: {
       type: String,
       required: [ true, '募資方案預覽圖必填' ],
       validate: {
         validator: function (value) {
-          return urlRegex.test(value)
+          return value.match(urlRegex)
         },
         message: '僅能輸入網址'
       }
@@ -96,10 +96,6 @@ const PlanSchema = new Schema<IPlanDocument>(
     toSponsor:{
       type: String,
       default:'',
-      validate: {
-        validator: checkStringNotBlank,
-        message: '不能為空'
-      },
     },
     specification: [specificationSchema],
     freightMainIsland:{
@@ -121,26 +117,17 @@ const PlanSchema = new Schema<IPlanDocument>(
   }
 )
 
-// 購買時增加方案購買數量、商品數量 不等於 null ，減少商品總數
-PlanSchema.methods.addNowBuyers = async function() {
+// 購買時增加方案購買數亮，商品數量 不等於 null ，減少商品總數
+PlanSchema.methods.sponsorToPlan = function() {
   this.nowBuyers += 1
-  if (this.quantity === null) {
-    await this.save()
+  if (this.quantity !== null) {
+    this.quantity -= 1 
   }
-  this.quantity - 1 
-  await this.save()
-}
-
-// 購買時若 商品數量 不等於 null ，減少商品總數
-PlanSchema.methods.removeQuantity = function() {
-  if (this.quantity === null) {
-    return
-  }
-  this.quantity - 1 
-  return this.save()
+  return this
 }
 
 const Plan = model<IPlanDocument>('plan', PlanSchema)
+
 export {
   Plan,
   PlanSchema
