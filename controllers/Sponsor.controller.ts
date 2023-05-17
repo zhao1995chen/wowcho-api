@@ -138,13 +138,10 @@ export const SponsorController = {
       //  plan
       const plan = await Plan.findById({ _id: sponsor.planId })
       console.log('plan', plan)
-      plan.nowBuyers + 1
-      if (plan.quantity === null) {
-        await plan.save().catch((e) => {
-          throw {  message: `更新錯誤:${e}` }
-        })
+      plan.nowBuyers += 1
+      if (plan.quantity !== null) {
+        plan.quantity -= 1 
       }
-      plan.quantity - 1 
       await plan.save().catch((e) => {
         throw {  message: `更新錯誤:${e}` }
       })
