@@ -69,7 +69,7 @@ export const ProposalController = {
       } else {
         query = {customizedUrl: proposalUrl }
       }
-      const proposal = await Proposal.findById<IProposal>(query).populate('planIdList')
+      const proposal = await Proposal.findOne<IProposal>(query).populate('planIdList')
         .catch(()=> {
           throw '募資活動 ID 錯誤'
         })
