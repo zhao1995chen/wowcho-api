@@ -1,9 +1,13 @@
 import express from 'express'
 import cors from 'cors' 
 
-import { userRouter } from './routes/User.route'
+
 import { updatePasswordRouter } from './routes/UpdatePassword.route'
 import { uploadRouter } from './routes/Upload.route'
+import { promisesRouter } from './routes/Promises.route'
+
+import { userRouter } from './routes/User.route'
+import { faqRouter } from './routes/Faq.route'
 
 const app = express()
 
@@ -14,6 +18,8 @@ app.use(express.json())
 app.use('/upload', uploadRouter)
 
 app.use('/profile', userRouter)
+app.use('/proposal/faq', faqRouter)
+app.use('/proposal/promises', promisesRouter)
 app.use('/reset-password', updatePasswordRouter)  //更新密碼
 
 

@@ -1,25 +1,51 @@
 import { Response } from 'express'
-import { HEADERS } from '../const'
-import { Error as MongooseError } from 'mongoose'
+import { ERROR, HEADERS } from '../const'
 
-export const errorHandler = (res: Response, e?: any) => {
-  // console.log('errorHandler', e)
-  // console.log('errorHandler name', e.name)
+export interface IError {
+  code?: number
+  message: string
+  fieldName?: string
+  fieldValue?: string
+  keyPattern?: string
+  name?: string
+  errors?: string
+}
 
-  let messages = e?.message || e;
-  if (e.code === 11000) {
-    // console.log(Object.keys(e.keyPattern))
-    messages = `${Object.keys(e.keyPattern)}已被使用`;
-  } else if (e.name === "ValidationError"){
-    messages = Object.values(e.errors).map(
-      (err: MongooseError.ValidatorError) => err.message //陣列
-    );
+export const errorHandler = (res: Response, e: IError) => {
+  const { fieldName, fieldValue } = e
+  let { code, message } = e
+
+  // key replace
+  if (message) {
+    if (message.includes('fieldName') && fieldName) message.replace('fileName', fieldName)
+    if (message.includes('fieldValue') && fieldValue) message.replace('fileValue', fieldName)
+  } else {
+    message.replace(null, ERROR.GENERAL)
   }
+
   
-  res.writeHead(404, HEADERS)
-  res.write(JSON.stringify({
-    status: 'Failed',
-    message: messages
-  }))
-  res.end()
+  if (e.code === 11000) {
+    // console.log(Object.keys(e.keyPattern)[0])
+    let param = Object.keys(e.keyPattern)[0]
+    switch(param){
+      case "account":
+        param = "帳號"
+        break
+      case "email":
+        param = "信箱"
+        break
+    }
+    message = `${param}已被使用`;
+    if (e.code < 100 || e.code > 599) {
+      code = 500;
+    }
+  }
+
+  res.set(HEADERS).status(code || 400).send(
+    JSON.stringify({
+      status: 'Failed',
+      message
+    })
+  ).end()
+
 }
