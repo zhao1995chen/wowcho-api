@@ -67,14 +67,12 @@ export const SponsorController = {
       const request = req.body
       const thisShaEncrypt = await create_mpg_sha_encrypt(request.TradeInfo)
       const data = await create_mpg_aes_decrypt(request.TradeInfo)
-      console.log('return Data', data, data.Result)
       // 解碼後資料不相同、藍新狀態碼錯誤， 回傳錯誤
       if( thisShaEncrypt !== request.TradeSha || !request.Status ){
         throw { message: '付款失敗，請聯絡渦潮客服人員' }
       }
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
-      // ItemDesc=${data.ItemDesc}&PaymentType=${data.PaymentType}&PayTime=${data.PayTime} 
-      res.redirect(`${FrontendHost}/#/cart/success?`) //轉址前端路由頁面
+      res.redirect(`${FrontendHost}/#/cart/success?ItemDesc=${data.Result.ItemDesc}&PaymentType=${data.Result.PaymentType}&PayTime=${data.Result.PayTime}`) //轉址前端路由頁面
     } catch(e) {
       errorHandler(res, e)
     }
