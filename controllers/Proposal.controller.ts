@@ -96,7 +96,7 @@ export const ProposalController = {
         })
       // if (!plan) throw '募資活動 ID 錯誤'
       const proposal = await Proposal.findOne({ customizedUrl: plan.proposalUrl })
-        .select('_id image name description targetPrice')
+        // .select('_id image name description targetPrice')
         .catch(()=> {
           throw '募資活動 ID 錯誤'
         })
