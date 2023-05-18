@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors' 
 
 import { uploadRouter } from './routes/Upload.route'
 import { proposalRouter } from './routes/Proposal.route'
@@ -7,6 +8,7 @@ import { userRouter } from './routes/User.route'
 import { faqRouter } from './routes/Faq.route'
 
 const app = express()
+app.use(cors())
 
 app.use(express.json())
 

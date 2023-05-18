@@ -30,7 +30,7 @@ const ProposalSchema = new Schema<IProposalDocument>(
         validator: checkStringNotBlank,
         message: '不能為空'
       },
-    }, 
+    },
     category: {
       type: Number,
       required: [ true, '募資活動分類必填' ],
@@ -65,6 +65,10 @@ const ProposalSchema = new Schema<IProposalDocument>(
       },
     },
     nowPrice: {
+      type: Number,
+      default: 0,
+    },
+    nowBuyers:{
       type: Number,
       default: 0,
     },
