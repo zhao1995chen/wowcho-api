@@ -3,6 +3,7 @@ import { Schema, model } from 'mongoose'
 import { IRegister } from '../interfaces/Register.interface'
 import { User } from '../models/User.model'
 
+
 const RegisterSchema = new Schema<IRegister>(
   {
     // username: {
