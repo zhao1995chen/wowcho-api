@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
 import { successHandler } from '../services/successHandler'
 import { errorHandler } from '../services/errorHandler'
-import { Proposal } from '../models/Proposal.model'
 import { IProposal,IProposalQuery } from '../interfaces/Proposal.interface'
+import { Proposal } from '../models/Proposal.model'
 import { Plan } from '../models/Plan.model'
+import { User } from '../models/User.model'
 
 export const ProposalController = {
 
@@ -59,6 +60,7 @@ export const ProposalController = {
   async get(req: Request, res: Response) {
     // 註冊 plan 資源
     console.assert(Plan)
+    console.log(User)
     try {
       let query = null
 
@@ -69,7 +71,10 @@ export const ProposalController = {
       } else {
         query = {customizedUrl: proposalUrl }
       }
-      const proposal = await Proposal.findOne<IProposal>(query).populate('planIdList')
+      
+      const proposal = await Proposal.findOne<IProposal>(query)
+        .populate('planIdList')
+        .populate({ path: 'ownerId', select: 'name username email account' })
         .catch(()=> {
           throw '募資活動 ID 錯誤'
         })
