@@ -126,6 +126,7 @@ const SponsorSchema = new Schema<ISponsor>(
     projectTitle: {
       type: String,
       default: '',
+      required: [true, '方案名稱為必填'],
     },
     remark: {
       type: String,
