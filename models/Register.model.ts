@@ -1,47 +1,38 @@
-// 會員相關
-import { Schema, model } from 'mongoose'
+import { Schema } from 'mongoose'
 import { IRegister } from '../interfaces/Register.interface'
-import { User } from '../models/User.model'
+import { User } from './User.model'
+import { IUser } from '../interfaces/User.interface'
 
-
-const RegisterSchema = new Schema<IRegister>(
+const RegisterSchema = new Schema<IUser & IRegister>(
   {
-    // username: {
-    //   type: String,
-    //   required: [true, '請輸入您的名字']
-    // },
     account: {
       type: String,
-      required: [true, '帳號必填'],
-      unique: true,
+      required: [ true, '帳號必填' ]
+    },
+    password: {
+      type: String,
+      minlength: [ 8, '密碼最少要 8 碼'],
+      required: [ true, '密碼必填' ]
     },
     email: {
       type: String,
-      required: [true, '請輸入您的 Email'],
-      unique: true, 
-      lowercase: true,
-      select: false
+      required: [ true, '信箱必填' ],
+      validate:{
+        validator: (email: string) => {
+          const regExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+          return regExp.test(email)
+        },
+        message: ({value}) => `${value} 不符合驗證格式`
+      }
     },
-    password:{
-      type: String,
-      required: [true,'請輸入密碼'],
-      minlength: 8,
-      select: false
-    },
-    // createdAt: {
-    //   type: Date,
-    //   default: Date.now,
-    //   select: false
-    // }
   },
   {
-    versionKey: false
+    versionKey: false,
+    timestamps: true
   }
 )
 
-// const Register = model<IRegister>('Register', RegisterSchema)
-const Register = User.discriminator<IRegister>('Register', RegisterSchema)
-
+const Register = User.discriminator<IRegister>('register', RegisterSchema)
 
 export {
   Register,
