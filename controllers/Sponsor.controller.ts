@@ -53,8 +53,7 @@ export const SponsorController = {
       })
 
       // 將訂單資訊整理加密後，回傳給前端，前端使用此資料，才能金流認證通過
-      res.json({ aesEncrypt, shaEncrypt })
-
+      successHandler(res, { aesEncrypt, shaEncrypt })
     } catch(e) {
       errorHandler(res, e)
     }
