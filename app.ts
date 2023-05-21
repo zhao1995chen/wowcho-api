@@ -26,16 +26,6 @@ app.use('/proposal/faq', faqRouter)
 app.use('/proposal/promises', promisesRouter)
 app.use('/reset-password', updatePasswordRouter)  //更新密碼
 
-
-
-// 404 錯誤
-app.use(function(req, res, next) {
-    res.status(404).json({
-      status: 'error',
-      message: "無此路由資訊",
-    });
-  });
-  
   // express 錯誤處理 (from controller)
   const resErrorProd = (err, res) => {
     if (err.isOperational) {
