@@ -42,7 +42,7 @@ export const ProposalController = {
       const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
       const page = Number(req.query.page) || 1 // 目前頁數
       const proposalList = await Proposal.find(queryObject)
-        .select('_id imageUrl name customizedUrl category summary targetPrice starTime endTime updatedAt createdAt')
+        .select('_id image name customizedUrl category summary nowPrice targetPrice starTime endTime nowBuyers updatedAt createdAt')
         .sort(sortCondition) 
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
