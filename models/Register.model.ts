@@ -25,6 +25,14 @@ const RegisterSchema = new Schema<IUser & IRegister>(
         message: ({value}) => `${value} 不符合驗證格式`
       }
     },
+    memberRole:{
+      type: String,
+      default: 'default',
+    },
+    // oauthId:{
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'oauthUser'
+    // },
   },
   {
     versionKey: false,

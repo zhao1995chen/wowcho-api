@@ -1,4 +1,4 @@
-import { Document } from 'mongoose'
+import { Document, Types } from 'mongoose'
 
 interface IUser extends Document {
   account: string // 帳號
@@ -18,6 +18,8 @@ interface IUser extends Document {
   instagram?: string // IG 網址
   youtube?: string // YT 網址
   tokenList?: Array<string> // 驗證
+  memberRole?: string, //是否是第三方資料
+  oauthId: Types.ObjectId//第三方驗證資料關聯
   __t: string
 }
 

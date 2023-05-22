@@ -53,6 +53,14 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: null,
     },
+    memberRole:{
+      type: String,
+      default: 'default',
+    },
+    oauthId:{
+      type: Schema.Types.ObjectId,
+      ref: 'oauthUser'
+    },
     __t: {
       type: String,
       select: false
