@@ -11,7 +11,7 @@ const SponsorSchema = new Schema<ISponsor>(
     totalMoney: Number,
     orderStatus: {
       type: Number,
-      enum: [-1, 0, 1]
+      enum: [-1, 0, 1, -2]
     },
     shippingStatus: {
       type: Number,
@@ -42,9 +42,6 @@ const SponsorSchema = new Schema<ISponsor>(
   },
   {
     versionKey: false,
-    timestamps: {
-      currentTime: () => Math.floor(Date.now() / 1000)
-    }
   }
 )
 

@@ -23,7 +23,9 @@ export const SponsorController = {
           limit: pageSize
         }
       })
-        .catch((e) =>  {throw e})
+        .catch((e) =>  {
+          errorHandler(res, e)
+        })
 
       const data = {
         list: sponsorData.sponsorIdList,

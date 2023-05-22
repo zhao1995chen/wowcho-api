@@ -23,8 +23,8 @@ interface ISponsor extends Document {
   orderSpecification: ISpecification[] // 贊助方案規格
   freight: number // 運費
   totalMoney: number // 贊助金額
-  orderStatus: 0 | 1 | 2 // 訂單狀態
-  shippingStatus: 0 | 1 // 出貨狀態
+  orderStatus: -1 | 0 | 1 | 2 // 訂單狀態
+  shippingStatus: -1 | 0 | 1 // 出貨狀態
   messageIdList: Schema.Types.ObjectId[] // 訊息列表
   payWay: string // 付款方式
   logistics: string // 物流方式 
