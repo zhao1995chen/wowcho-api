@@ -13,7 +13,6 @@ export const errorHandler = (res: Response, e: IError) => {
   let { message } = e
   // key replace
   if (message) {
-    console.log(message)
     if (message.includes('fieldName') && fieldName) message = message.replace('fieldName', fieldName)
     if (message.includes('fieldValue') && fieldValue) message = message.replace('filedValue', fieldName)
   } else {
@@ -27,3 +26,4 @@ export const errorHandler = (res: Response, e: IError) => {
     })
   ).end()
 }
+
