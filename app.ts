@@ -7,7 +7,7 @@ import { registerRouter } from './routes/Register.route'
 import { uploadRouter } from './routes/Upload.route'
 import { promisesRouter } from './routes/Promises.route'
 
-import { userRouter } from './routes/User.route'
+import { profileRouter } from './routes/Profile.route'
 import { faqRouter } from './routes/Faq.route'
 
 const app = express()
@@ -21,7 +21,7 @@ app.use('/upload', uploadRouter)
 
 app.use('/login', loginRouter)       //登入
 app.use('/sign-up', registerRouter)    //註冊
-app.use('/profile', userRouter)
+app.use('/profile', profileRouter)
 app.use('/proposal/faq', faqRouter)
 app.use('/proposal/promises', promisesRouter)
 app.use('/reset-password', updatePasswordRouter)  //更新密碼
