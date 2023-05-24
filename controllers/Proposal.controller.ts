@@ -11,20 +11,20 @@ export const ProposalController = {
   // 獲得列表
   async getList(req: Request, res: Response) {
     try {
-      const order = req.query.order
+      const order = Number(req.query.order)
       let sortCondition = {}
       switch (order) {
-      case '0':
+      case 1:
         sortCondition = { endTime: 1 } // 根據 endTime timeStamp 進行升序排序
         break
-      case '1':
-        sortCondition = { createdAt:-1 } // 根據 createdAt  進行倒序
+      case 2:
+        sortCondition = { endTime:-1 } // 根據 createdAt  進行倒序
         break
-      case '2':
+      case 3:
         sortCondition = { nowPrice: 1 } // 根據 nowPrice 進行升序排序
         break
-      case '3':
-        sortCondition = { nowPrice: 1 } // 根據 nowPrice 進行升序排序
+      case 4:
+        sortCondition = { nowPrice: -1 } // 根據 nowPrice 進行升序排序
         break
       default:
         sortCondition = {}

@@ -5,13 +5,14 @@ enum eAgeLimit {
 	r18 = 1// 18 禁
 }
 enum eCategory {
-  Art = 0,
   Society = 1,
-  Education = 2,
+	Publishing = 2,
   VideoGame = 3,
-  Technology = 4,
-  Leisure = 5,
-  Fashion = 6,
+  Entertainment = 4,
+  Life = 5,
+  Design = 6,
+	Technology = 7,
+	Leisure = 8
 }
 enum eStatus {
 	draft = 0, // 草稿
