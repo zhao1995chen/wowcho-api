@@ -13,7 +13,6 @@ export const SponsorController = {
   async createEncode(req: Request, res: Response){
     try{
       const { planId } = req.body
-      console.log(req.body)
       // 1. 驗證資料
       // 用方案 id 獲得資料
       const plan = await Plan.findById({ _id: planId }).catch(()=>{
@@ -146,3 +145,18 @@ export const SponsorController = {
     }
   },
 }
+
+
+// "recipient": {
+//   "name": "王小明",
+//   "phone": "0911111111",
+//   "info": {
+//     "method": "郵局", // "7-11"
+//     "shop": {
+//       "name": "南港店",
+//       "id": "001324",
+//     },
+//     "trackingId": "PP123124",
+//     "address": "台北市台北區台北路1號",
+//   },
+// }

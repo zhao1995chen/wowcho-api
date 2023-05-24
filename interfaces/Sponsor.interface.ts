@@ -1,10 +1,9 @@
 import { Types } from 'mongoose'
 
-interface ISpecification {
-  title: string // 規格標題
-  option: string // 規格內容
-}
-
+// interface ISpecification {
+//   title: string // 規格標題
+//   option: string // 規格內容
+// }
 
 interface ISponsor {
   // 藍薪金流所需欄位
@@ -63,3 +62,15 @@ export {
   ISponsor,
   // IPaySuccessOrder
 }
+
+// "messages": [
+//   { 
+//     "id": "001",
+//     "name": "How 哥",
+//     "role": 0, 
+//     "image": "https://www...../face.png",
+//     "content": "環保愛地球，這個募資活動推推！",
+//     "createdAt": 213131223123,
+//     "updatedAt": 213131223123,
+//   }
+// ],
