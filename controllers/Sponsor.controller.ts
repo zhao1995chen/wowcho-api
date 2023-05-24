@@ -145,18 +145,3 @@ export const SponsorController = {
     }
   },
 }
-
-
-// "recipient": {
-//   "name": "王小明",
-//   "phone": "0911111111",
-//   "info": {
-//     "method": "郵局", // "7-11"
-//     "shop": {
-//       "name": "南港店",
-//       "id": "001324",
-//     },
-//     "trackingId": "PP123124",
-//     "address": "台北市台北區台北路1號",
-//   },
-// }
