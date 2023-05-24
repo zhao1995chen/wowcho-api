@@ -12,16 +12,18 @@ export const { MerchantID, Host, ReturnURL, NotifyURL, FrontendHost } = process.
 export const SponsorController = {
   async createEncode(req: Request, res: Response){
     try{
-      // TODO: 添加 ownerId (使用者) proposalUrl (專案網址) planId(方案 id)
       const { planId } = req.body
+      // 1. 驗證資料
+      // 用方案 id 獲得資料
       const plan = await Plan.findById({ _id: planId }).catch(()=>{
         throw { message: '方案 ID 錯誤'}
       })
+      //  驗證 planId 是否還有數量
       if (plan.quantity !== null && plan.quantity <= 0 ){
         throw { message: '此方案數量為 0'}
       }
-      // 1. 檢查使用者 body 、 驗證 planId 是否還有數量
       const newSponsor =  new Sponsor(req.body)
+      // 驗證使用者資料是否符合規則
       const validateError = newSponsor.validateSync()
       if (validateError) throw validateError
       const sponsorData = newSponsor.toObject() // 或者 newSponsor.toJSON();
@@ -29,16 +31,15 @@ export const SponsorController = {
       // 2. 轉換資料
       const createData = {
         // 會員等其他資料
+        ownerId: req.body._id,
+        ...sponsorData, // 商品品名 、 金額、 購買方式、 使用者 email 、備註等等皆在此
         // 藍新必要資料
-        ...sponsorData,
         MerchantID: MerchantID,
         TimeStamp: Math.round(Date.now()),
         Version: '2.0',
         RespondType: 'JSON',
         CREDIT: 1,
         MerchantOrderNo: sponsorData._id
-        // ReturnURL: encodeURIComponent(ReturnURL),
-        // NotifyURL: encodeURIComponent(NotifyURL),
       }
 
       const aesEncrypt = create_mpg_aes_encrypt(createData)
@@ -139,7 +140,6 @@ export const SponsorController = {
       await newProposal.save()
       successHandler(res, {plan:newPlan , proposal:newProposal})
     }catch(e){
-      console.log(e)
       errorHandler(res, e)
     }
   },

@@ -60,7 +60,7 @@ export const ProposalController = {
   async get(req: Request, res: Response) {
     // 註冊 plan 資源
     console.assert(Plan)
-    console.log(User)
+    console.assert(User)
     try {
       let query = null
 
@@ -89,6 +89,7 @@ export const ProposalController = {
   async getCart(req: Request, res: Response) {
     // 註冊 plan 資源
     try {
+      // 
       const id = req.query.id // 指定 plan id
       const plan = await Plan.findById({ _id:id })
         .catch(()=> {
