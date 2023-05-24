@@ -13,6 +13,7 @@ export const SponsorController = {
   async createEncode(req: Request, res: Response){
     try{
       const { planId } = req.body
+      console.log(req.body)
       // 1. 驗證資料
       // 用方案 id 獲得資料
       const plan = await Plan.findById({ _id: planId }).catch(()=>{
@@ -27,7 +28,8 @@ export const SponsorController = {
       const validateError = newSponsor.validateSync()
       if (validateError) throw validateError
       const sponsorData = newSponsor.toObject() // 或者 newSponsor.toJSON();
-      
+      // 刪除 User id
+      delete sponsorData._id
       // 2. 轉換資料
       const createData = {
         // 會員等其他資料

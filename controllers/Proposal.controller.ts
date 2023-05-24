@@ -21,10 +21,10 @@ export const ProposalController = {
         sortCondition = { endTime:-1 } // 根據 createdAt  進行倒序
         break
       case 3:
-        sortCondition = { nowPrice: 1 } // 根據 nowPrice 進行升序排序
+        sortCondition = { nowPrice: -1 } // 根據 nowPrice 進行升序排序
         break
       case 4:
-        sortCondition = { nowPrice: -1 } // 根據 nowPrice 進行升序排序
+        sortCondition = { nowPrice: 1 } // 根據 nowPrice 進行升序排序
         break
       default:
         sortCondition = {}
