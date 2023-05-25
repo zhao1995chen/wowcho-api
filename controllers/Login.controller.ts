@@ -86,7 +86,7 @@ export const LoginController = {
           username: name,
           image: picture,
           email: email,
-          account: email
+          // account: email
         })
         await newOauthUser.save()
         const newUser = await user.save()
