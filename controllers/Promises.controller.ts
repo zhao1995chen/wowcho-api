@@ -17,7 +17,7 @@ export const PromisesController = {
       // 資料表關聯
       const { _id } = proposalData
       const proposal = await Proposal.findById(_id).populate('promiseId', { _id: 0 })
-      const data = proposal.promiseId
+      const data = proposal
       // console.log('promise', data)
 
       successHandler(res, data)
