@@ -9,9 +9,9 @@ import { User } from '../models/User.model'
 import { oauthUser } from '../models/OauthUser.model'
 import { ERROR } from '../const'
 import { OAuth2Client } from 'google-auth-library'
-
-const CLIENT_ID = '725451058317-memrhkm0hp3tp0hkmrrr1dglr387u2lq.apps.googleusercontent.com'
-const client = new OAuth2Client(CLIENT_ID)
+// process.env.JWT_EXPIRES_IN
+const OAUTH_ID = process.env.OAUTH_ID
+const client = new OAuth2Client(OAUTH_ID)
 
 export const LoginController = {
   async login(req: Request, res: Response) {
@@ -52,7 +52,7 @@ export const LoginController = {
       const { token }  = req.body
       const ticket = await client.verifyIdToken({
         idToken: token,
-        audience: CLIENT_ID, 
+        audience: OAUTH_ID, 
       }).catch(()=> {
         throw {  message: '第三方登入資訊錯誤，請聯繫渦潮人員' }
       })
@@ -85,13 +85,14 @@ export const LoginController = {
           name,
           username: name,
           image: picture,
-          email: email
+          email: email,
+          account: email
         })
         await newOauthUser.save()
-        await user.save()
-
+        const newUser = await user.save()
+        useToken = generateToken(newUser)
       }
-      successHandler(res, { useToken })
+      successHandler(res, { token:useToken })
     } catch (e) {
       errorHandler(res, e)
     }
