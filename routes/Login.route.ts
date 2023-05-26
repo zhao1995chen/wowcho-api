@@ -1,0 +1,5 @@
+import express from 'express'
+import { LoginController } from '../controllers/Login.controller'
+export const loginRouter = express.Router()
+
+loginRouter.post('/', LoginController.login)
