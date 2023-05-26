@@ -13,7 +13,11 @@ export const ProposalController = {
     try {
       const order = Number(req.query.order)
       let sortCondition = {}
+      // 排序方式
       switch (order) {
+      case 0:
+        sortCondition = { } // 根據 endTime timeStamp 進行升序排序
+        break
       case 1:
         sortCondition = { endTime: 1 } // 根據 endTime timeStamp 進行升序排序
         break
@@ -32,13 +36,13 @@ export const ProposalController = {
       }
       const currentTime: number = Date.now() // 當前時間
       const queryObject: IProposalQuery = { 
-        endTime: { $gte: currentTime } // 僅查詢 endTime > 當前時間，就是未過期的資料
+        endTime: { $gte: currentTime }, // 僅查詢 endTime > 當前時間，就是未過期的資料
+        startTime: { $lte: currentTime}
       }
       const category: string | null = req.query.category as string || null // 分類無值時使用 null ，有值則使用
       // 分類有值時，queryObject.category 帶上分類，否則 queryObject.category = null
-      if (category) { 
-        queryObject.category = Number(category)
-      }
+      // category 非 0 時代上 queryObject.category 
+      if(Number(category) !== 0) queryObject.category = Number(category)
       const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
       const page = Number(req.query.page) || 1 // 目前頁數
       const proposalList = await Proposal.find(queryObject)
@@ -108,6 +112,34 @@ export const ProposalController = {
       successHandler(res,data )
     }
     catch(e) {
+      errorHandler(res, e)
+    }
+  },
+  // 搜尋功能
+  async getSearch(req: Request, res: Response) {
+    try {
+      const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
+      const page = Number(req.query.page) || 1 // 目前頁數
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const searchKeyword:any = req.query.search
+      const regex = new RegExp(searchKeyword, 'i')
+      const queryObject = {
+        $or: [
+          { title: regex }, 
+          { summary: regex }, 
+          { description: regex }
+        ]
+      }
+      const proposalList = await Proposal.find(queryObject)
+        .skip((pageSize * page) - pageSize)
+        .limit(pageSize)
+      const totalCount = await Proposal.countDocuments(queryObject)
+      const data = {
+        list: proposalList,
+        totalCount:totalCount
+      }
+      successHandler(res, data)
+    } catch(e){
       errorHandler(res, e)
     }
   },
