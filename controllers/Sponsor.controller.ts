@@ -72,8 +72,31 @@ export const SponsorController = {
       if( thisShaEncrypt !== request.TradeSha || !request.Status ){
         throw { message: '付款失敗，請聯絡渦潮客服人員' }
       }
+
+      const params = new URLSearchParams({
+        title: data.Status === "SUCCESS" ? "交易成功" : "交易失敗" , 
+        Message: data.Message,
+        Status: data.Status,
+        MerchantOrderNo: data.Result.MerchantOrderNo,
+        TradeNo: data.Result.TradeNo,
+        ItemDesc: data.Result.ItemDesc,
+        PaymentType: data.Result.PaymentType,
+        Auth: data.Result.Auth,
+        Card6No: data.Result.Card6No,
+        Card4No: data.Result.Card4No,
+        PayTime: data.Result.PayTime,
+        Amt: data.Result.Amt,
+        TradeType: data.Result.TradeType,
+        StoreType: data.Result.StoreType,
+        StoreName: data.Result.StoreName,
+        StoreAddr: data.Result.StoreAddr,
+        CVSCOMName: data.Result.CVSCOMName,
+        CVSCOMPhone: data.Result.CVSCOMPhone
+      });
+
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
-      res.redirect(`${FrontendHost}/#/cart/success?ItemDesc=${data.Result.ItemDesc}&PaymentType=${data.Result.PaymentType}&PayTime=${data.Result.PayTime}`) //轉址前端路由頁面
+      res.redirect(`${FrontendHost}/#/cart/success?${params.toString()}`) //轉址前端路由頁面
+
     } catch(e) {
       errorHandler(res, e)
     }
