@@ -126,7 +126,7 @@ export const ProposalController = {
       const currentTime: number = Date.now() // 當前時間
       const queryObject = {
         $or: [
-          { title: regex }, 
+          { name: regex }, 
           { summary: regex }, 
           { description: regex },
         ],
