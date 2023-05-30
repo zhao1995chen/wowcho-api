@@ -74,7 +74,7 @@ export const SponsorController = {
       }
 
       const params = new URLSearchParams({
-        title: data.Status === "SUCCESS" ? "交易成功" : "交易失敗" , 
+        title: data.Status === 'SUCCESS' ? '交易成功' : '交易失敗' , 
         Message: data.Message,
         Status: data.Status,
         MerchantOrderNo: data.Result.MerchantOrderNo,
