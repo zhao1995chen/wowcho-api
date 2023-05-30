@@ -92,7 +92,7 @@ export const SponsorController = {
         StoreAddr: data.Result.StoreAddr,
         CVSCOMName: data.Result.CVSCOMName,
         CVSCOMPhone: data.Result.CVSCOMPhone
-      });
+      })
 
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
       res.redirect(`${FrontendHost}/#/cart/success?${params.toString()}`) //轉址前端路由頁面
