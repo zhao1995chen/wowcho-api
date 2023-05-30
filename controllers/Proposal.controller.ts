@@ -19,10 +19,10 @@ export const ProposalController = {
         sortCondition = { } // 根據 endTime timeStamp 進行升序排序
         break
       case 1:
-        sortCondition = { endTime: 1 } // 根據 endTime timeStamp 進行升序排序
+        sortCondition = { endTime: -1 } // 根據 endTime timeStamp 進行升序排序
         break
       case 2:
-        sortCondition = { endTime:-1 } // 根據 createdAt  進行倒序
+        sortCondition = { endTime: 1 } // 根據 createdAt  進行倒序
         break
       case 3:
         sortCondition = { nowPrice: -1 } // 根據 nowPrice 進行升序排序
@@ -123,12 +123,15 @@ export const ProposalController = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const searchKeyword:any = req.query.search
       const regex = new RegExp(searchKeyword, 'i')
+      const currentTime: number = Date.now() // 當前時間
       const queryObject = {
         $or: [
           { title: regex }, 
           { summary: regex }, 
-          { description: regex }
-        ]
+          { description: regex },
+        ],
+        endTime: { $gte: currentTime }, // 僅查詢 endTime > 當前時間，就是未過期的資料
+        startTime: { $lte: currentTime}
       }
       const proposalList = await Proposal.find(queryObject)
         .skip((pageSize * page) - pageSize)

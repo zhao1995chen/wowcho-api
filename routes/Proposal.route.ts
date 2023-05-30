@@ -7,3 +7,4 @@ proposalRouter
   .get('/', ProposalController.getList)
   .get('/details', ProposalController.get)
   .get('/cart', ProposalController.getCart)
+  .get('/search', ProposalController.getSearch)
