@@ -22,6 +22,8 @@ export const SponsorController = {
       if (plan.quantity !== null && plan.quantity <= 0 ){
         throw { message: '此方案數量為 0'}
       }
+      const userId = req.body._id
+      delete req.body._id
       const newSponsor =  new Sponsor(req.body)
       // 驗證使用者資料是否符合規則
       const validateError = newSponsor.validateSync()
@@ -32,7 +34,7 @@ export const SponsorController = {
       // 2. 轉換資料
       const createData = {
         // 會員等其他資料
-        ownerId: req.body._id,
+        ownerId: userId,
         ...sponsorData, // 商品品名 、 金額、 購買方式、 使用者 email 、備註等等皆在此
         // 藍新必要資料
         MerchantID: MerchantID,

@@ -28,7 +28,8 @@ const ProfileSchema = new Schema<IProfile>(
     customizedUrl:  String,
     gender: {
       type: Number,
-      required: [true, '性別必填'],
+      default: 0,
+      // required: [true, '性別必填'],
       enum: [ -1, 0, 1, 2, 3, 4 ],
     },
     birthday:  Number,
