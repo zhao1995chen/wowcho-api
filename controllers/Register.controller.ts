@@ -1,63 +1,58 @@
-
-import { Request, Response, NextFunction } from 'express'
-import { appError } from '../services/appError'
-import { errorHandler } from '../services/errorHandler'
-import { Register } from '../models/Register.model'
-// import { IRegister } from '../interfaces/Register.interface'
-// import { successHandler } from '../services/successHandler'
-import validator from 'validator'
 import bcrypt from 'bcryptjs'
-import { generateSendJWT } from '../middlewares/auth'
-
+import { Request, Response } from 'express'
+import { errorHandler } from '../services/errorHandler'
+import { successHandler } from '../services/successHandler'
+import { Register } from '../models/Register.model'
+import { IRegister } from '../interfaces/Register.interface'
+import { HASH_TIME } from '../const'
+import { User } from '../models/User.model'
 
 export const RegisterController = {
+  async create(req: Request, res: Response) {
+    try {
+      // console.log('body', req.body)
+      const newMember = new Register(req.body)
 
-    async create(req: Request, res: Response, next: NextFunction): Promise<void>{
-        try{
-            //檢查使用者body
-            // console.log(req.body)
-            let { email, password, account, } =  new Register(req.body);
-            // let confirmPassword = req.body.confirmPassword
-            // 內容不可為空
-            // console.log(email, password,  account)
-            if(!email||!password||!account){
-                return next(appError(400,"請填寫必填欄位！",next));
-            }
-            // 密碼正確
-            // if(password!==confirmPassword){
-            //     return next(appError(400,"密碼不一致！",next));
-            // }
-            // 密碼 8 碼以上
-            if(!validator.isLength(password,{min:8})){
-                return next(appError(400,"密碼字數低於 8 碼",next));
-            }
-            // 是否為 Email
-            if(!validator.isEmail(email)){
-                return next(appError(400,"Email 格式不正確",next));
-            }
+      // 驗證資料
+      const validateError = newMember.validateSync()
+      if (validateError) throw { message: validateError }
 
-            // bcrypt.hash加密密碼後，存進資料庫
-            password = await bcrypt.hash(req.body.password,12);
-            const newUser = await Register.create({ //建入資料庫
-                email,
-                password,
-                account
-            });
-            // console.log("newUser",newUser)
-        
-            //jwt加密TOKEN 給前端
-            generateSendJWT(newUser,201,res);
-        } catch(e) {
-            errorHandler(res, e)
-        }
-    },
-    // options(req: Request, res: Response) {
-    //     successHandler(res)
-    // },
-    // async duplicate(value: IRegister) {
-    //     console.log(value)
-    //     const { email } = value
-    //     if (await Register.exists({ email })) return '信箱已使用'
-    //     return
-    // }
+      // console.log('register', req.body, newMember)
+      // 確認沒有重複的 account 跟 email
+      const duplicate = await RegisterController.duplicate(newMember)
+      if (duplicate) throw { message: duplicate }
+      
+      // 創建新會員
+      const { account, email, password } = newMember
+      const hashPassword = await bcrypt.hash(password, HASH_TIME)
+      // console.log('hash', hashPassword)
+
+      await Register.create({
+      // const user = await Register.create({
+        account,
+        email,
+        name: account,
+        username: account,
+        password: hashPassword
+      })
+      // console.log('user', user)
+
+      // 回傳 200 成功
+      successHandler(res)
+    } catch(e) {
+      errorHandler(res, e)
+    }
+  },
+  options(req: Request, res: Response) {
+    successHandler(res)
+  },
+  async duplicate(value: IRegister) {
+    // console.log(value)
+
+    const { account, email } = value
+
+    if (await User.exists({ account })) return '帳號已使用'
+    if (await User.exists({ email })) return '信箱已使用'
+    return
+  }
 }
