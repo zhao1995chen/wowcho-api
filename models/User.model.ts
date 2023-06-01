@@ -27,7 +27,7 @@ const UserSchema = new Schema<IUser>(
     },
     gender: {
       type: Number,
-      default: null,
+      default: 0,
     },
     birthday: {
       type: Number,

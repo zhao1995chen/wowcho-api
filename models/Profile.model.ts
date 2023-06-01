@@ -6,7 +6,7 @@ const ProfileSchema = new Schema<IProfile>(
   {
     name: {
       type: String,
-      required: [true, '真實姓名必填'],
+      // required: [true, '真實姓名必填'],
     },
     username: {
       type: String,
