@@ -29,7 +29,7 @@ export const ProfileController = {
 
       // 驗證資料
       const validateError = payload.validateSync()
-      if (validateError) throw { message: validateError }
+      if (validateError) throw { validateMessage: validateError, type: 'validate' }
 
       // 確認 email 是否變更
       const oldProfileData = await User.findById(_id)

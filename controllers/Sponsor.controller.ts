@@ -27,7 +27,7 @@ export const SponsorController = {
       const newSponsor =  new Sponsor(req.body)
       // 驗證使用者資料是否符合規則
       const validateError = newSponsor.validateSync()
-      if (validateError) throw validateError
+      if (validateError) throw { validateMessage: validateError, type: 'validate' }
       const sponsorData = newSponsor.toObject() // 或者 newSponsor.toJSON();
       // // 刪除 User id
       // delete sponsorData._id

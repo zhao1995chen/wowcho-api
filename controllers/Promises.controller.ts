@@ -12,7 +12,7 @@ export const PromisesController = {
 
       // 驗證 id
       const validateError = proposalData.validateSync()
-      if (validateError) throw validateError
+      if (validateError) throw { validateMessage: validateError, type: 'validate' }
 
       // 資料表關聯
       const { _id } = proposalData
