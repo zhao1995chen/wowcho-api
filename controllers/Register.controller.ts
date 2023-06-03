@@ -32,7 +32,9 @@ export const RegisterController = {
         account,
         email,
         username,
-        password: hashPassword
+        password: hashPassword,
+        businessName: username,
+        businessEmail: email
       })
       // console.log('user', user)
 

@@ -47,6 +47,17 @@ export const ProfileController = {
       errorHandler(res, e)
     }
   },
+  // 透過 ID 搜尋
+  async getBusinessProfile(req: Request, res: Response){
+    try {
+      const data = await User.findById(req.query.id)
+        .select('businessName businessIntro businessImage businessEmail facebook instagram website')
+        .catch(() => { throw '會員不存在' })
+      successHandler(res, data)
+    } catch(e) {
+      errorHandler(res, e)
+    }
+  },
   options(req: Request, res: Response) {
     successHandler(res)
   },

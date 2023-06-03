@@ -78,7 +78,7 @@ export const ProposalController = {
       
       const proposal = await Proposal.findOne<IProposal>(query)
         .populate('planIdList')
-        .populate({ path: 'ownerId', select: 'name username email account' })
+        .populate({ path: 'ownerId', select: 'username account businessName businessEmail' })
         .catch(()=> {
           throw '募資活動 ID 錯誤'
         })
@@ -143,6 +143,22 @@ export const ProposalController = {
       }
       successHandler(res, data)
     } catch(e){
+      errorHandler(res, e)
+    }
+  },
+  async getUserProposal (req: Request, res: Response) {
+    try {
+      const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
+      const page = Number(req.query.page) || 1 // 目前頁數
+      // const data = await User.find().catch(() => { throw '會員不存在' })
+      // 搜尋 proposal 中 owner 符合的
+      const data = await Proposal.find({ ownerId: req.query.id})
+        .skip((pageSize * page) - pageSize)
+        .limit(pageSize)
+        .sort({ endTime: 1 }) 
+
+      successHandler(res, data)
+    } catch(e) {
       errorHandler(res, e)
     }
   },
