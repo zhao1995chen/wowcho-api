@@ -34,7 +34,7 @@ export const SponsorController = {
       // 2. 轉換資料
       const createData = {
         // 會員等其他資料
-        ownerId: userId,
+        buyerId: userId,
         ...sponsorData, // 商品品名 、 金額、 購買方式、 使用者 email 、備註等等皆在此
         // 藍新必要資料
         MerchantID: MerchantID,
@@ -166,6 +166,48 @@ export const SponsorController = {
       await newProposal.save()
       successHandler(res, {plan:newPlan , proposal:newProposal})
     }catch(e){
+      errorHandler(res, e)
+    }
+  },
+  // 贊助列表
+  async getList (req: Request, res: Response) {
+    try {
+      const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
+      const page = Number(req.query.page) || 1 // 目前頁數
+      const { _id } = req.body
+      // 購買人
+      const sponsorList = await Sponsor.find({ buyerId :_id })
+        .populate('buyerId')
+        .populate('ownerId')
+        .populate('planId')
+        .populate('proposalId')
+
+        .sort({ createTime: -1 })
+        .skip((pageSize * page) - pageSize)
+        .limit(pageSize)
+      const totalCount = await Sponsor.countDocuments({  buyerId :_id  })
+
+
+      const data = {
+        list: sponsorList,
+        totalCount,
+      }
+      successHandler(res,data )
+    } catch (e) {
+      throw {  message: `${e}`}
+    }
+  },
+  async get (req: Request, res: Response) {
+    try {
+      const id = req.query.id
+      // 從 sponsor 表中撈出該使用者的贊助資料，並取得對應頁數的內容
+      const data = await Sponsor.findById(id)
+        .populate('buyerId')
+        .populate('ownerId')
+        .populate('planId')
+        .populate('proposalId')
+      successHandler(res,data )
+    } catch (e) {
       errorHandler(res, e)
     }
   },

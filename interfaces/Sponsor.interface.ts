@@ -48,8 +48,11 @@ interface ISponsor {
   LgsNo: string //物流寄件單號(寄件代碼)
 
   // 渦潮自己資料庫需要欄位，新建時觸發
+  customizedUrl: string // proposal URL 等同 id
+  buyerId: Types.ObjectId | string
   ownerId: Types.ObjectId | string // 購買會員 id
   planId: Types.ObjectId | string  // 贊助方案 id,
+  proposalId:  Types.ObjectId | string  // 贊助活動 id,
   payStatus: boolean, // 是否付款
   projectTitle: string // 贊助專案名稱,
   // orderSpecification: ISpecification[] // 會員選擇贊助方案規格
@@ -62,15 +65,3 @@ export {
   ISponsor,
   // IPaySuccessOrder
 }
-
-// "messages": [
-//   { 
-//     "id": "001",
-//     "name": "How 哥",
-//     "role": 0, 
-//     "image": "https://www...../face.png",
-//     "content": "環保愛地球，這個募資活動推推！",
-//     "createdAt": 213131223123,
-//     "updatedAt": 213131223123,
-//   }
-// ],

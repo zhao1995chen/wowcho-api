@@ -13,8 +13,6 @@ export const ProfileController = {
     try {
       const { _id } = req.body
       const data = await User.findById(_id).select({ _id: 0, password: 0 })
-      // console.log('get', data)
-
       successHandler(res, data)
     } catch(e) {
       errorHandler(res, e)
@@ -25,7 +23,6 @@ export const ProfileController = {
     try {
       const { _id } = req.body
       const payload = new Profile(req.body)
-      // console.log('update', payload)
 
       // 驗證資料
       const validateError = payload.validateSync()
@@ -62,7 +59,6 @@ export const ProfileController = {
     successHandler(res)
   },
   async duplicate(value: IProfile) {
-    // console.log(value)
 
     const { email } = value
     

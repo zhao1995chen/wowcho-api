@@ -19,7 +19,6 @@ export const FaqController = {
       const { _id } = proposalData
       const proposal = await Proposal.findById(_id).populate('faqIdList', { _id: 0 })
       const list = proposal.faqIdList
-      // console.log('faq', list)
 
       successHandler(res, { list })
     } catch(e) {

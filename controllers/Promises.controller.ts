@@ -18,7 +18,6 @@ export const PromisesController = {
       const { _id } = proposalData
       const proposal = await Proposal.findById(_id).populate('promiseId', { _id: 0 })
       const data = proposal
-      // console.log('promise', data)
 
       successHandler(res, data)
     } catch(e) {
@@ -28,13 +27,10 @@ export const PromisesController = {
   // TODO 建測試資料，不是實際上對外開放的 API，功能沒問題後要拿掉
   async create(req: Request, res: Response) {
     try {
-      // console.log(req.body)
       const payload = new Promises(req.body)
-      // console.log('payload', payload)
       if (!payload) throw '空值'
 
       const result = await Promises.create(payload)
-      // console.log('post', result)
 
       successHandler(res, result)
     } catch(e) {

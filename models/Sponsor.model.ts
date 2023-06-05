@@ -3,17 +3,6 @@ import { Schema, model } from 'mongoose'
 import { ISponsor } from '../interfaces/Sponsor.interface'
 import validator from 'validator'
 
-const specificationSchema = new Schema({
-  title: {
-    type: String,
-    default: ''
-  },
-  option: {
-    type: String,
-    default: ''
-  },
-})
-
 const SponsorSchema = new Schema<ISponsor>(
   // 藍新金流所需
   {
@@ -110,32 +99,43 @@ const SponsorSchema = new Schema<ISponsor>(
     CVSCOMPhone: String, //取貨人手機號碼
     LgsType: String, //物流型態 'B2C','C2C'
     LgsNo: String, //物流寄件單號(寄件代碼)
-    // 渦潮自己資料庫需要欄位，新建時觸發 
-    ownerId: {
+    // 渦潮自己資料庫需要欄位，新建時觸發
+    customizedUrl:{
+      type: String,
+    },
+    buyerId :{ // 購買人 ID
       type: Schema.Types.ObjectId,
       ref: 'user'
     },
-    planId: {
+    ownerId: { // 購買專案的提案人 ID
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    },
+    planId: { // 方案 ID
       type: Schema.Types.ObjectId,
       ref: 'plan'
     },
-    payStatus: {
+    proposalId :{
+      type: Schema.Types.ObjectId,
+      ref: 'proposal'
+    },
+    payStatus: { // 是否付款
       type: Boolean,
       default: false,
     },
-    projectTitle: {
+    // projectTitle: { // 專案名稱
+    //   type: String,
+    //   default: '',
+    //   required: [true, '方案名稱為必填'],
+    // },
+    remark: { // 備註
       type: String,
       default: '',
-      required: [true, '方案名稱為必填'],
     },
-    remark: {
-      type: String,
-      default: '',
-    },
-    option :{
+    option :{ // 方案規格
       type: []
     },
-    address:{
+    address:{ //方案地址
       type: String,
       default: '',
     }
