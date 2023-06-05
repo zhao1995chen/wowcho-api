@@ -150,13 +150,16 @@ export const ProposalController = {
     try {
       const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
       const page = Number(req.query.page) || 1 // 目前頁數
-      // const data = await User.find().catch(() => { throw '會員不存在' })
       // 搜尋 proposal 中 owner 符合的
-      const data = await Proposal.find({ ownerId: req.query.id})
+      const list = await Proposal.find({ ownerId: req.query.id})
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
         .sort({ endTime: 1 }) 
-
+      const totalCount = await Proposal.countDocuments({ownerId: req.query.id})
+      const data = {
+        list,
+        totalCount:totalCount
+      }
       successHandler(res, data)
     } catch(e) {
       errorHandler(res, e)

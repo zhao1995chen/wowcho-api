@@ -120,8 +120,6 @@ export const SponsorController = {
       // 2. 透過回傳資料 MerchantOrderNo，查詢資料庫 (id)
       const findSponsor = await (await Sponsor.findOne({ _id: result.MerchantOrderNo })).toObject()
       // 3. 調整資料庫資料
-      console.log('findSponsor',findSponsor)
-      console.log('result',result)
       findSponsor.payStatus = true
       let newSponsor = null
       // 宅配
