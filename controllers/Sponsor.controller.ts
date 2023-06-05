@@ -120,10 +120,12 @@ export const SponsorController = {
       // 2. 透過回傳資料 MerchantOrderNo，查詢資料庫 (id)
       const findSponsor = await (await Sponsor.findOne({ _id: result.MerchantOrderNo })).toObject()
       // 3. 調整資料庫資料
+      console.log('findSponsor',findSponsor)
+      console.log('result',result)
       findSponsor.payStatus = true
       let newSponsor = null
       // 宅配
-      if (result.CVSCOM === 0) {
+      if (findSponsor.CVSCOM === 0) {
         newSponsor = {
           // 原本有的資料 
           ...findSponsor,
@@ -141,7 +143,7 @@ export const SponsorController = {
           PayTime: result.PayTime ?  result.PayTime : '',
           PaymentMethod: result.PaymentMethod ? result.PaymentMethod : '',
         }
-      } else if (result.CVSCOM === 3){ // 超商店到店
+      } else if (findSponsor.CVSCOM === 3){ // 超商店到店
         newSponsor = {
           // 原本有的資料 
           ...findSponsor,
@@ -198,7 +200,7 @@ export const SponsorController = {
       const page = Number(req.query.page) || 1 // 目前頁數
       const { _id } = req.body
       // 購買人
-      const sponsorList = await Sponsor.find({ buyerId :_id })
+      const sponsorList = await Sponsor.find({ buyerId :_id , payStatus:true })
         .populate('buyerId')
         .populate('ownerId')
         .populate('planId')
@@ -207,7 +209,7 @@ export const SponsorController = {
         .sort({ createTime: -1 })
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
-      const totalCount = await Sponsor.countDocuments({  buyerId :_id  })
+      const totalCount = await Sponsor.countDocuments({ buyerId :_id  })
 
 
       const data = {
