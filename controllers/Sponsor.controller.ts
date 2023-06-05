@@ -122,33 +122,55 @@ export const SponsorController = {
       // 3. 調整資料庫資料
       findSponsor.payStatus = true
       let newSponsor = null
-      newSponsor = {
-        // 原本有的資料 
-        ...findSponsor,
-        // 添加藍新回傳後資料
-        IP: result.IP,
-        TradeNo: result.TradeNo,
-        EscrowBank: result.EscrowBank,
-        PaymentType: result.PaymentType,
-        RespondCode: result.RespondCode,
-        // 信用卡
-        Auth: result.Auth ? result.Auth : '',
-        Card6No: result.Card6No ? result.Card6No : '',
-        Card4No: result.Card4No ? result.Card4No : '',
-        AuthBank: result.AuthBank ? result.AuthBank : '',
-        PayTime: result.PayTime ?  result.PayTime : '',
-        PaymentMethod: result.PaymentMethod ? result.PaymentMethod : '',
-        // 取貨付款
-        StoreCode: result.StoreCode ? result.StoreCode : '',
-        StoreType: result.StoreType ? result.StoreType : '',
-        StoreName: result.StoreName ? result.StoreName : '',
-        TradeType: result.TradeType ? result.TradeType : '',
-        StoreAddr: result.StoreAddr ? result.StoreAddr : '',
-        CVSCOMName: result.CVSCOMName ? result.CVSCOMName : '',
-        CVSCOMPhone: result.CVSCOMPhone ? result.CVSCOMPhone : '',
-        LgsType: result.LgsType ? result.LgsType : '',
-        LgsNo: result.LgsNo ? result.LgsNo : '',
+      // 宅配
+      if (result.CVSCOM === 0) {
+        newSponsor = {
+          // 原本有的資料 
+          ...findSponsor,
+          // 添加藍新回傳後資料
+          IP: result.IP,
+          TradeNo: result.TradeNo,
+          EscrowBank: result.EscrowBank,
+          PaymentType: result.PaymentType,
+          RespondCode: result.RespondCode,
+          // 信用卡
+          Auth: result.Auth ? result.Auth : '',
+          Card6No: result.Card6No ? result.Card6No : '',
+          Card4No: result.Card4No ? result.Card4No : '',
+          AuthBank: result.AuthBank ? result.AuthBank : '',
+          PayTime: result.PayTime ?  result.PayTime : '',
+          PaymentMethod: result.PaymentMethod ? result.PaymentMethod : '',
+        }
+      } else if (result.CVSCOM === 3){ // 超商店到店
+        newSponsor = {
+          // 原本有的資料 
+          ...findSponsor,
+          // 添加藍新回傳後資料
+          IP: result.IP,
+          TradeNo: result.TradeNo,
+          EscrowBank: result.EscrowBank,
+          PaymentType: result.PaymentType,
+          RespondCode: result.RespondCode,
+          // 信用卡
+          Auth: result.Auth ? result.Auth : '',
+          Card6No: result.Card6No ? result.Card6No : '',
+          Card4No: result.Card4No ? result.Card4No : '',
+          AuthBank: result.AuthBank ? result.AuthBank : '',
+          PayTime: result.PayTime ?  result.PayTime : '',
+          PaymentMethod: result.PaymentMethod ? result.PaymentMethod : '',
+          // 取貨付款
+          StoreCode: result.StoreCode ? result.StoreCode : '',
+          StoreType: result.StoreType ? result.StoreType : '',
+          StoreName: result.StoreName ? result.StoreName : '',
+          TradeType: result.TradeType ? result.TradeType : '',
+          StoreAddr: result.StoreAddr ? result.StoreAddr : '',
+          CVSCOMName: result.CVSCOMName ? result.CVSCOMName : '',
+          CVSCOMPhone: result.CVSCOMPhone ? result.CVSCOMPhone : '',
+          LgsType: result.LgsType ? result.LgsType : '',
+          LgsNo: result.LgsNo ? result.LgsNo : '',
+        }
       }
+
       // 4.將修改後資料存至資料庫、同時減少 plan 數量資料
 
       const sponsor = await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
