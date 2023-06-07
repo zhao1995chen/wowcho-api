@@ -5,6 +5,7 @@ import { IProposal,IProposalQuery } from '../interfaces/Proposal.interface'
 import { Proposal } from '../models/Proposal.model'
 import { Plan } from '../models/Plan.model'
 import { User } from '../models/User.model'
+import { ERROR } from '../const'
 
 export const ProposalController = {
 
@@ -50,7 +51,13 @@ export const ProposalController = {
         .sort(sortCondition) 
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
+        .catch(() => { 
+          throw { message: ERROR.GENERAL }
+        })
       const totalCount = await Proposal.countDocuments(queryObject)
+        .catch(() => { 
+          throw { message: ERROR.GENERAL }
+        })
       const data = {
         list: proposalList,
         totalCount:totalCount
@@ -103,7 +110,7 @@ export const ProposalController = {
       const proposal = await Proposal.findOne({ customizedUrl: plan.proposalUrl })
         // .select('_id image name description targetPrice')
         .catch(()=> {
-          throw '募資活動 ID 錯誤'
+          throw '募資活動 URL 錯誤'
         })
       const data = {
         proposal:proposal,
@@ -121,7 +128,7 @@ export const ProposalController = {
       const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
       const page = Number(req.query.page) || 1 // 目前頁數
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const searchKeyword:any = req.query.search
+      const searchKeyword:any = req.query.search // 字串
       const regex = new RegExp(searchKeyword, 'i')
       const currentTime: number = Date.now() // 當前時間
       const queryObject = {
@@ -136,16 +143,23 @@ export const ProposalController = {
       const proposalList = await Proposal.find(queryObject)
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
+        .catch(()=> {
+          throw { message: ERROR.GENERAL }
+        })
       const totalCount = await Proposal.countDocuments(queryObject)
+        .catch(()=> {
+          throw { message: ERROR.GENERAL }
+        })
       const data = {
         list: proposalList,
-        totalCount:totalCount
+        totalCount
       }
       successHandler(res, data)
     } catch(e){
       errorHandler(res, e)
     }
   },
+  // 贊助者查看提案者時使用
   async getUserProposal (req: Request, res: Response) {
     try {
       const pageSize = Number(req.query.pageSize) || 10 // 每頁顯示幾筆資料
@@ -154,8 +168,14 @@ export const ProposalController = {
       const list = await Proposal.find({ ownerId: req.query.id})
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
-        .sort({ endTime: 1 }) 
+        .sort({ endTime: 1 })
+        .catch(()=> {
+          throw { message: ERROR.GENERAL }
+        })
       const totalCount = await Proposal.countDocuments({ownerId: req.query.id})
+        .catch(()=> {
+          throw { message: ERROR.GENERAL }
+        })
       const data = {
         list,
         totalCount:totalCount

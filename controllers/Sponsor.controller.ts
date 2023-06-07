@@ -4,12 +4,13 @@ import { Sponsor } from '../models/Sponsor.model'
 import { create_mpg_aes_encrypt, create_mpg_sha_encrypt, create_mpg_aes_decrypt } from '../middlewares/Pay.middleware'
 import { errorHandler } from '../services/errorHandler'
 import { successHandler } from '../services/successHandler'
-// import { ERROR } from '../const'
+import { ERROR } from '../const'
 import { Plan } from '../models/Plan.model'
 import { Proposal } from '../models/Proposal.model'
 
 export const { MerchantID, Host, ReturnURL, NotifyURL, FrontendHost } = process.env
 export const SponsorController = {
+  // 點擊購買時觸發
   async createEncode(req: Request, res: Response){
     try{
       const { planId } = req.body
@@ -62,7 +63,8 @@ export const SponsorController = {
       errorHandler(res, e)
     }
   },
-  async mpgReturn(req: Request, res: Response){ //從藍新取得交易結果
+  //從藍新取得交易結果
+  async mpgReturn(req: Request, res: Response){
     try {
       // 解密交易內容
 
@@ -103,7 +105,8 @@ export const SponsorController = {
       errorHandler(res, e)
     }
   },
-  async mpgNotify(req: Request, res: Response){ //從藍新幕後取得交易結果並存資料庫
+  //從藍新幕後取得交易結果並存資料庫
+  async mpgNotify(req: Request, res: Response){
     try{
       const request = req.body
       if (!Object.prototype.hasOwnProperty.call(req.body, 'TradeInfo')) throw {  message: '付款失敗，請聯絡渦潮客服人員' }
@@ -172,13 +175,10 @@ export const SponsorController = {
       }
 
       // 4.將修改後資料存至資料庫、同時減少 plan 數量資料
-
       const sponsor = await Sponsor.findByIdAndUpdate(findSponsor._id, newSponsor,{
         new: true, // 返回更新後的文檔
         upsert: false, // 如果沒找到匹配的文檔，不要創建新文檔
         runValidators: true, // 觸發 Schema 驗證
-      }).catch((e) => {
-        throw {  message: `更新錯誤:${e}` }
       })
       const plan = await Plan.findById({ _id: sponsor.planId })
       const newPlan = plan.sponsorToPlan()
@@ -207,6 +207,9 @@ export const SponsorController = {
         .sort({ createTime: -1 })
         .skip((pageSize * page) - pageSize)
         .limit(pageSize)
+        .catch(() => {
+          throw { message: ERROR.GENERAL }
+        })
       const totalCount = await Sponsor.countDocuments({ buyerId :_id  })
 
 
@@ -219,6 +222,7 @@ export const SponsorController = {
       throw {  message: `${e}`}
     }
   },
+  // 贊助詳細
   async get (req: Request, res: Response) {
     try {
       const id = req.query.id
@@ -228,6 +232,9 @@ export const SponsorController = {
         .populate('ownerId')
         .populate('planId')
         .populate('proposalId')
+        .catch(() => {
+          throw { message: ERROR.GENERAL }
+        })
       successHandler(res,data )
     } catch (e) {
       errorHandler(res, e)
