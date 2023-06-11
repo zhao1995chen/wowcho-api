@@ -5,6 +5,7 @@ import { IProposal,IProposalQuery } from '../interfaces/Proposal.interface'
 import { Proposal } from '../models/Proposal.model'
 import { Plan } from '../models/Plan.model'
 import { User } from '../models/User.model'
+import { Placard } from '../models/Placard.model'
 import { ERROR } from '../const'
 
 export const ProposalController = {
@@ -72,6 +73,7 @@ export const ProposalController = {
     // 註冊 plan 資源
     console.assert(Plan)
     console.assert(User)
+    console.assert(Placard)
     try {
       let query = null
 
@@ -85,14 +87,17 @@ export const ProposalController = {
       
       const proposal = await Proposal.findOne<IProposal>(query)
         .populate('planIdList')
+        .populate('placardIdList')
+        .populate('faqIdList')
         .populate({ path: 'ownerId', select: 'username account businessName businessEmail' })
-        .catch(()=> {
-          throw '募資活動 ID 錯誤'
+        .catch((e)=> {
+          throw { message:'募資活動 ID 錯誤'}
         })
-      if (!proposal) throw '募資活動 ID 錯誤'
+      if (!proposal) throw { message:'募資活動 ID 錯誤'}
       successHandler(res, proposal)
     }
     catch(e) {
+      console.log(e)
       errorHandler(res, e)
     }
   },
@@ -104,13 +109,13 @@ export const ProposalController = {
       const id = req.query.id // 指定 plan id
       const plan = await Plan.findById({ _id:id })
         .catch(()=> {
-          throw '募資方案 ID 錯誤'
+          throw { message:'募資方案 ID 錯誤' }
         })
       // if (!plan) throw '募資活動 ID 錯誤'
       const proposal = await Proposal.findOne({ customizedUrl: plan.proposalUrl })
         // .select('_id image name description targetPrice')
         .catch(()=> {
-          throw '募資活動 URL 錯誤'
+          throw { message:'募資活動 URL 錯誤' }
         })
       const data = {
         proposal:proposal,
