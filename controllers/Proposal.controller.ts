@@ -38,8 +38,11 @@ export const ProposalController = {
       }
       const currentTime: number = Date.now() // 當前時間
       const queryObject: IProposalQuery = { 
-        endTime: { $gte: currentTime }, // 僅查詢 endTime > 當前時間，就是未過期的資料
-        startTime: { $lte: currentTime}
+        // 僅查詢 endTime > 當前時間 > startTime，就是未過期的資料
+        endTime: { $gte: currentTime },
+        startTime: { $lte: currentTime},
+        //
+        status : 2,
       }
       const category: string | null = req.query.category as string || null // 分類無值時使用 null ，有值則使用
       // 分類有值時，queryObject.category 帶上分類，否則 queryObject.category = null
@@ -75,14 +78,14 @@ export const ProposalController = {
     console.assert(User)
     console.assert(Placard)
     try {
-      let query = null
+      const query = {
+        status : 2,
+        customizedUrl: ''
+      }
 
-      const id = req.query.id // 指定 proposal id
       const proposalUrl = req.query.proposalUrl
-      if (id !== undefined) {
-        query = {_id: id}
-      } else {
-        query = {customizedUrl: proposalUrl }
+      if (typeof proposalUrl === 'string') {
+        query.customizedUrl = proposalUrl
       }
       
       const proposal = await Proposal.findOne<IProposal>(query)
@@ -90,14 +93,13 @@ export const ProposalController = {
         .populate('placardIdList')
         .populate('faqIdList')
         .populate({ path: 'ownerId', select: 'username account businessName businessEmail' })
-        .catch((e)=> {
+        .catch(()=> {
           throw { message:'募資活動 ID 錯誤'}
         })
       if (!proposal) throw { message:'募資活動 ID 錯誤'}
       successHandler(res, proposal)
     }
     catch(e) {
-      console.log(e)
       errorHandler(res, e)
     }
   },
@@ -143,7 +145,8 @@ export const ProposalController = {
           { description: regex },
         ],
         endTime: { $gte: currentTime }, // 僅查詢 endTime > 當前時間，就是未過期的資料
-        startTime: { $lte: currentTime}
+        startTime: { $lte: currentTime },
+        status : 2,
       }
       const proposalList = await Proposal.find(queryObject)
         .skip((pageSize * page) - pageSize)
