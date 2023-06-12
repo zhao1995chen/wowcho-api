@@ -10,3 +10,7 @@ sponsorRouter.post('/createOrder', isAuth, SponsorController.createEncode)
 sponsorRouter.post('/newebpay-return', SponsorController.mpgReturn)
 // 確認交易：Notify
 sponsorRouter.post('/newebpay-notify',SponsorController.mpgNotify)
+
+sponsorRouter.get('/', isAuth, SponsorController.getList)
+
+sponsorRouter.get('/details', isAuth, SponsorController.get)

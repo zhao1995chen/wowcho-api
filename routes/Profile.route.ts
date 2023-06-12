@@ -7,3 +7,4 @@ export const profileRouter = express.Router()
 
 profileRouter.get('/', isAuth, ProfileController.get)
 profileRouter.patch('/', isAuth, ProfileController.update)
+profileRouter.get('/getBusinessProfile', ProfileController.getBusinessProfile)

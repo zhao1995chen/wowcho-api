@@ -126,6 +126,10 @@ const ProposalSchema = new Schema<IProposalDocument>(
       type: Schema.Types.ObjectId,
       ref: 'plan',
     }],
+    placardIdList:[{
+      type: Schema.Types.ObjectId,
+      ref: 'placard',
+    }],
     faqIdList:  [{
       type: Schema.Types.ObjectId,
       ref: 'faq'

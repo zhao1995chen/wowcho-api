@@ -13,13 +13,12 @@ export const FaqController = {
 
       // 驗證 id
       const validateError = proposalData.validateSync()
-      if (validateError) throw validateError
+      if (validateError) throw { validateMessage: validateError, type: 'validate' }
 
       // 資料表關聯
       const { _id } = proposalData
       const proposal = await Proposal.findById(_id).populate('faqIdList', { _id: 0 })
       const list = proposal.faqIdList
-      // console.log('faq', list)
 
       successHandler(res, { list })
     } catch(e) {

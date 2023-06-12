@@ -75,6 +75,8 @@ interface IProposalDocument extends IProposal {
 interface IProposalQuery {
   category?: number;
   endTime?: { $gte: number };
+	startTime?: { $lte: number };
+
 }
 
 export {
