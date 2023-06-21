@@ -76,7 +76,7 @@ interface IProposalQuery {
   category?: number;
   endTime?: { $gte: number };
 	startTime?: { $lte: number };
-	status:number
+	status?:number
 }
 
 export {
