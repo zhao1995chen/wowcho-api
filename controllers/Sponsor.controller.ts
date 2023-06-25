@@ -99,7 +99,7 @@ export const SponsorController = {
       })
 
       // 轉址 query 戴上，方案名稱、付款方式、付款時間
-      res.redirect(`${FrontendHost}/#/cart/success?${params.toString()}`) //轉址前端路由頁面
+      res.redirect(`${FrontendHost}/cart/success?${params.toString()}`) //轉址前端路由頁面
 
     } catch(e) {
       errorHandler(res, e)
