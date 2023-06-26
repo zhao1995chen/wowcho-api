@@ -63,7 +63,8 @@ export const ProposalController = {
         })
       const data = {
         list: proposalList,
-        totalCount:totalCount
+        totalCount:totalCount,
+        test: ''
       }
       successHandler(res, data)
     } catch(e) {
