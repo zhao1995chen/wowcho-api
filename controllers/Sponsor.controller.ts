@@ -181,12 +181,10 @@ export const SponsorController = {
         runValidators: true, // 觸發 Schema 驗證
       })
       const plan = await Plan.findById({ _id: sponsor.planId })
-      const newPlan = plan.sponsorToPlan()
+      const newPlan = await plan.sponsorToPlan()
       const proposal = await Proposal.findOne({ customizedUrl: newPlan.proposalUrl })
-      const newProposal = proposal.sponsorToPlan(newPlan.actualPrice)
-      await newPlan.save()
-      await newProposal.save()
-      successHandler(res, {plan:newPlan , proposal:newProposal})
+      const newProposal = await proposal.sponsorToPlan(newPlan.actualPrice)
+      successHandler(res, { plan:newPlan , proposal:newProposal })
     }catch(e){
       errorHandler(res, e)
     }

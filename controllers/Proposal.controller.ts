@@ -41,7 +41,7 @@ export const ProposalController = {
         // 僅查詢 endTime > 當前時間 > startTime，就是未過期的資料
         endTime: { $gte: currentTime },
         startTime: { $lte: currentTime},
-        // status : 2,
+        status: { $nin: [4, 5] }
       }
       const category: string | null = req.query.category as string || null // 分類無值時使用 null ，有值則使用
       // 分類有值時，queryObject.category 帶上分類，否則 queryObject.category = null

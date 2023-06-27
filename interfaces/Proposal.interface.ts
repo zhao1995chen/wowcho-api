@@ -15,8 +15,12 @@ enum eCategory {
 	Leisure = 8
 }
 enum eStatus {
-	draft = 0, // 草稿
-	already = 1 // 上架
+	DRAFT, // 草稿
+	WAITING_FOR_APPROVAL, // 等待審核
+	APPROVED, // 審核通過
+	REJECTED, // 審核未通過
+	SUSPEND, // 停權
+	OFF_SHELF // 下架
 }
 
 interface IProposal extends Document {
@@ -67,8 +71,6 @@ interface IProposal extends Document {
 	placardIdList: Array<Types.ObjectId>;
 }
 interface IProposalDocument extends IProposal {
-  pushPlan: (id: Types.ObjectId) => void;
-  removePlan: (array) => void;
   sponsorToPlan: (number) => IProposalDocument;
 }
 
@@ -76,7 +78,7 @@ interface IProposalQuery {
   category?: number;
   endTime?: { $gte: number };
 	startTime?: { $lte: number };
-	status?:number
+	status?:number| {$nin: Array<number>}
 }
 
 export {
