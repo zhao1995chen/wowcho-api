@@ -182,7 +182,7 @@ export const SponsorController = {
       })
       const plan = await Plan.findById({ _id: sponsor.planId })
       const newPlan = await plan.sponsorToPlan()
-      const proposal = await Proposal.findOne({ customizedUrl: newPlan.proposalUrl })
+      const proposal = await Proposal.findOne({ customizedUrl: plan.proposalUrl })
       const newProposal = await proposal.sponsorToPlan(newPlan.actualPrice)
       successHandler(res, { plan:newPlan , proposal:newProposal })
     }catch(e){
