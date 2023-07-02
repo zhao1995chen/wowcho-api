@@ -141,27 +141,11 @@ const ProposalSchema = new Schema<IProposalDocument>(
   }
 )
 
-// 新增方案 id 至募資活列表
-ProposalSchema.methods.pushPlan = function(id) {
-  this.planIdList.push(id)
-  return this.save()
-}
-
-// 移除方案 id
-ProposalSchema.methods.removePlan = function(array) {
-  this.planIdList.forEach((value, index) => {
-    if (array.includes(value)) {
-      this.planIdList.splice(index, 1)
-    }
-  })
-  return this.save()
-}
-
 // 購買時增加當前購買數
-ProposalSchema.methods.sponsorToPlan = function(Price:number) {
+ProposalSchema.methods.sponsorToPlan = async function(Price:number) {
   this.nowBuyers += 1
   this.nowPrice += Price
-  return this
+  await this.save()
 }
 
 

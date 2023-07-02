@@ -118,12 +118,12 @@ const PlanSchema = new Schema<IPlanDocument>(
 )
 
 // 購買時增加方案購買數亮，商品數量 不等於 null ，減少商品總數
-PlanSchema.methods.sponsorToPlan = function() {
+PlanSchema.methods.sponsorToPlan = async function() {
   this.nowBuyers += 1
   if (this.quantity !== null) {
     this.quantity -= 1 
   }
-  return this
+  await this.save()
 }
 
 const Plan = model<IPlanDocument>('plan', PlanSchema)
